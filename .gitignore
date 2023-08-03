@@ -1,0 +1,53 @@
+# 忽略操作系统生成的文件
+.DS_Store
+Thumbs.db
+
+# 忽略编译生成的文件或目录
+/build/
+/dist/
+/node_modules/
+
+# 忽略配置文件中包含敏感信息的文件
+.env
+.env.local
+.env.*.local
+
+# 忽略日志和缓存文件
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+logs/
+*.pid
+*.seed
+*.pid.lock
+
+# 忽略构建工具生成的文件
+/coverage/
+/lib-cov/
+*.seed
+*.log
+*.csv
+*.dat
+*.out
+*.pid
+*.seed
+*.tgz
+pids
+logs
+*.rpt
+*.retry
+*.tar.gz
+*.zip
+*.tar
+*.swp
+*~
+/._*
+/.Spotlight-V100
+.DS_Store
+/._*
+/.Trash
+/*.sublime-project
+/*.sublime-workspace
+/Thumbs.db
+/UserInterfaceState.xcuserstate
