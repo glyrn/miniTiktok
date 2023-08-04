@@ -9,7 +9,7 @@ func TestInsert2UserTable(t *testing.T) {
 
 	Init()
 
-	user := &User{
+	user := &User_dao{
 		Id:       2,
 		Name:     "hali",
 		Password: "123456",
@@ -53,7 +53,7 @@ func TestDeleteUserById(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	Init()
-	user := User{
+	user := User_dao{
 		Id:       1,
 		Name:     "jack",
 		Password: "123456",
