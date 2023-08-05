@@ -16,7 +16,6 @@ func TestPostImage2FTP(t *testing.T) {
 	err = PostImage2FTP(file, "test1")
 	if err != nil {
 		fmt.Println("上传图片失败")
-		fmt.Println(err)
 	}
 	defer file.Close()
 }
@@ -29,8 +28,7 @@ func TestPostVideo2FTP(t *testing.T) {
 	}
 	err = PostImage2FTP(file, "test1")
 	if err != nil {
-		fmt.Println("上传图片失败")
-		fmt.Println(err)
+		fmt.Println("上传视频失败")
 	}
 	defer file.Close()
 }
