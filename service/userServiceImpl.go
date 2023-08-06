@@ -33,6 +33,29 @@ func (UserServiceImpl *UserServiceImpl) Insert2User(user *dao.User_dao) bool {
 
 }
 
+func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_service_final, error) {
+	user := User_service_final{
+		Id:   0,
+		Name: "",
+	}
+	user_dao, err := dao.GetUserById(userId)
+	if err != nil {
+		fmt.Println("获取dao层usr失败")
+		return user, err
+	}
+
+	// 用户信息获取成功
+	// 组装信息
+	user = User_service_final{
+		Id:   userId,
+		Name: user_dao.Name,
+	}
+	fmt.Println(user)
+
+	return user, err
+
+}
+
 func CreateTokenByUserName(userName string) string {
 	user, err := UserService.GetUserByName(new(UserServiceImpl), userName) // 先把接口赋值 然后传参
 	if err != nil {

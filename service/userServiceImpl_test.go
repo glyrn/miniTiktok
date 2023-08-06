@@ -25,6 +25,12 @@ func TestGetUserByName(t *testing.T) {
 
 }
 
+func TestGetUser_serviceById(t *testing.T) {
+	dao.InitDataBase()
+	userServiceImpl := UserServiceImpl{}
+	userServiceImpl.GetUser_serviceById(1)
+}
+
 func TestCreateTokenByUser_dao(t *testing.T) {
 
 	user := dao.User_dao{

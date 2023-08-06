@@ -14,10 +14,23 @@ type UserService interface {
 
 	// 新增用户
 	Insert2User(user *dao.User_dao) bool
+
+	// 未登录状态 需要根据id 获取到user对象
+	GetUser_serviceById(userId int64) (User_service_final, error)
 }
 
 // 组装结构体信息
-type User_service struct {
+// 这里是用于展示作者信息
+type User_service_Auth struct {
 	Id   int64  `json:"id,omitempty"` // 空则忽略
 	Name string `json:"name,omitempty"`
+}
+
+// 业务user实例 最后封装
+
+type User_service_final struct {
+	Id   int64  `json:"id,omitempty"`
+	Name string `json:"name,omitempty"`
+
+	// 待补充 点赞 关注等
 }
