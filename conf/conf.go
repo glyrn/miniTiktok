@@ -21,3 +21,10 @@ const VideoCount = 5
 // UrlPre 存储的图片和视频的链接的前缀信息
 const PlayUrlPre = "http://39.101.72.240:9002/videos/"
 const CoverUrlPre = "http://39.101.72.240:9002/images/"
+
+// 数据库配置 可根据生产环境改动
+const User = "guest"         // 用户名
+const Pass = "123456"        // 密码
+const Adrr = "39.101.72.240" // 地址
+const Port = "3306"          // 端口
+const Dbname = "tiktok"      // 数据库名称
