@@ -27,7 +27,6 @@ func Feed(c *gin.Context) {
 	inputTime := c.Query("latest_time")
 	fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
-
 	// 传入时间不为空，则把字符串转换成数字。
 	if inputTime != "" {
 		fmt.Println("获取到传入时间：" + inputTime)
@@ -40,6 +39,11 @@ func Feed(c *gin.Context) {
 			return
 		}
 		lastTime = time.Unix(me, 0)
+
+		//按照业务逻辑，确保传来的时间戳不大于当前时间
+		if err == nil && time.Now().Before(lastTime) {
+			lastTime = time.Now()
+		}
 	} else {
 		fmt.Println("传入时间为空")
 		// 传入时间为空，取当前的时间。
