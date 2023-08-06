@@ -60,10 +60,3 @@ func TestUpdateUser(t *testing.T) {
 	}
 	UpdateUser(&user)
 }
-func TestSaveVideoInfo(t *testing.T) {
-	InitDataBase()
-	err := SaveVideoInfo("111", "222", 64, "打篮球")
-	if err != nil {
-		fmt.Println("视频信息新增错误")
-	}
-}

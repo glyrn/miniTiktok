@@ -94,3 +94,11 @@ func TestDeleteVideoById(t *testing.T) {
 	}
 	fmt.Println("删除成功")
 }
+
+func TestSaveVideoInfo(t *testing.T) {
+	InitDataBase()
+	err := SaveVideoInfo("111", "222", 64, "打篮球")
+	if err != nil {
+		fmt.Println("视频信息新增错误")
+	}
+}
