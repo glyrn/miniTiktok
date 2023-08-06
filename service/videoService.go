@@ -8,9 +8,8 @@ import (
 
 type Video_service struct {
 	dao.Video_dao
-	Author dao.User_dao `json:"author"`
-	// 待组装视频字段F
-
+	Author User_service `json:"author"`
+	// 待组装视频字段
 }
 
 type VideoService interface {

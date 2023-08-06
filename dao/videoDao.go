@@ -66,7 +66,7 @@ func PostVideo2FTP(file io.Reader, videoName string) error {
 */
 // 增加新的视频信息
 func InsertVideo(video *Video_dao) bool {
-	if err := DB.Create(video); err != nil {
+	if err := DB.Create(video).Error; err != nil {
 		fmt.Println(err)
 		//添加失败
 		return false
