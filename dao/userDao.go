@@ -1,8 +1,10 @@
 package dao
 
+import "fmt"
+
 // 用户表
 type User_dao struct {
-	Id       int
+	Id       int64
 	Name     string
 	Password string
 }
@@ -15,7 +17,8 @@ func (user User_dao) TableName() string {
 // 增加用户 (增)
 
 func Insert2User(User *User_dao) bool {
-	if err := DB.Create(User); err != nil {
+	if err := DB.Create(User).Error; err != nil {
+		fmt.Println(err)
 		//添加失败
 		return false
 	}

@@ -10,8 +10,7 @@ func TestInsert2UserTable(t *testing.T) {
 	InitDataBase()
 
 	user := &User_dao{
-		Id:       2,
-		Name:     "hali",
+		Name:     "alialiyun",
 		Password: "123456",
 	}
 
@@ -39,7 +38,7 @@ func TestGetUserById(t *testing.T) {
 
 func TestGetUserByName(t *testing.T) {
 	InitDataBase()
-	user, err := GetUserByName("tony")
+	user, err := GetUserByName("test1")
 	if err != nil {
 		fmt.Println("fault")
 	}
