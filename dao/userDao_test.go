@@ -7,7 +7,7 @@ import (
 
 func TestInsert2UserTable(t *testing.T) {
 
-	Init()
+	InitDataBase()
 
 	user := &User_dao{
 		Id:       2,
@@ -19,7 +19,7 @@ func TestInsert2UserTable(t *testing.T) {
 }
 
 func TestGetAllUserTable(t *testing.T) {
-	Init()
+	InitDataBase()
 	userList, err := GetAllUser()
 	if err != nil {
 		fmt.Println("fault")
@@ -28,7 +28,7 @@ func TestGetAllUserTable(t *testing.T) {
 }
 
 func TestGetUserById(t *testing.T) {
-	Init()
+	InitDataBase()
 	user, err := GetUserById(2)
 	if err != nil {
 		fmt.Println("fault")
@@ -38,7 +38,7 @@ func TestGetUserById(t *testing.T) {
 }
 
 func TestGetUserByName(t *testing.T) {
-	Init()
+	InitDataBase()
 	user, err := GetUserByName("tony")
 	if err != nil {
 		fmt.Println("fault")
@@ -47,16 +47,23 @@ func TestGetUserByName(t *testing.T) {
 }
 
 func TestDeleteUserById(t *testing.T) {
-	Init()
+	InitDataBase()
 	DeleteUserById(2)
 }
 
 func TestUpdateUser(t *testing.T) {
-	Init()
+	InitDataBase()
 	user := User_dao{
 		Id:       1,
 		Name:     "jack",
 		Password: "123456",
 	}
 	UpdateUser(&user)
+}
+func TestSaveVideoInfo(t *testing.T) {
+	InitDataBase()
+	err := SaveVideoInfo("111", "222", 64, "打篮球")
+	if err != nil {
+		fmt.Println("视频信息新增错误")
+	}
 }
