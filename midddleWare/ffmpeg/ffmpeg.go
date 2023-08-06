@@ -1,9 +1,9 @@
 package ffmpeg
 
 import (
-	"Tiktok_release/miniTiktok/conf"
 	"fmt"
 	"golang.org/x/crypto/ssh"
+	"miniTiktok/conf"
 	"time"
 )
 

@@ -2,6 +2,6 @@ package dao
 
 import "testing"
 
-func TestInit(t *testing.T) {
-	Init()
+func TestInitDataBase(t *testing.T) {
+	InitDataBase()
 }

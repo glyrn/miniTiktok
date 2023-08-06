@@ -16,7 +16,7 @@ type config struct {
 	dbname string
 }
 
-func Init() {
+func InitDataBase() {
 
 	conf := &config{
 		user:   "guest",         // 用户名
@@ -36,5 +36,5 @@ func Init() {
 
 	// 连接成功
 	DB = db
-	fmt.Println("success")
+	fmt.Println("数据库连接成功")
 }

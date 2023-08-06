@@ -1,9 +1,9 @@
 package ftp
 
 import (
-	"Tiktok_release/miniTiktok/conf"
 	"fmt"
 	"github.com/dutchcoders/goftp"
+	"miniTiktok/conf"
 	"time"
 )
 
