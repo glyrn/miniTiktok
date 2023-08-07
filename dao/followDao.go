@@ -1,6 +1,8 @@
 package dao
 
-import "fmt"
+import (
+	"fmt"
+)
 
 // 关系表对应用户关系
 type Follow struct {
@@ -35,4 +37,19 @@ func GetTotalityByFollowerId(followerId int64) (int64, error) {
 		return 0, err
 	}
 	return cut, nil
+}
+
+// 通过 id 修改 cancel状态
+func UpdateCanCelById(id int64, cancel int8) {
+	var follow = &Follow{Id: id, Cancel: cancel}
+	if err := DB.Model(&follow).Update("cancel", follow.Cancel).Error; err != nil {
+		fmt.Println(err)
+	}
+}
+
+// 增加数据
+func InsertFollow(follow Follow) {
+	if err := DB.Create(&follow).Error; err != nil {
+		fmt.Println(err)
+	}
 }
