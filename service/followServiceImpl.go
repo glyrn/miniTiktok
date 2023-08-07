@@ -6,7 +6,7 @@ import (
 	"miniTiktok/util"
 )
 
-// // 通过 id 查询用户的总关注数量
+// 通过 id 查询用户的总关注数量
 func GetCancelById(userId int64) (int64, error) {
 	cut, err := dao.GetCancelById(userId)
 	util.Error("未知错误： ", err)
@@ -37,4 +37,14 @@ func InsertFollow(userId, toUserId, account int64) {
 		dao.InsertFollow(follow)
 	}
 
+}
+
+func GetFansDndAttention(id int64) (int64, int64) {
+	cancel, err1 := GetCancelById(id)
+	totality, err2 := GetTotalityByFollowerId(id)
+
+	if err1 != nil && err2 != nil {
+		return cancel, totality
+	}
+	return 0, 0
 }
