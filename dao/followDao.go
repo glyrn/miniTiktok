@@ -44,9 +44,8 @@ func GetTotalityByFollowerId(followerId int64) int64 {
 
 // 通过 id 修改 cancel状态
 func UpdateCanCelById(id int64, cancel int8) {
-	var follow = &Follow{Id: id, Cancel: cancel}
 
-	err := DB.Model(&follow).Update("cancel", follow.Cancel).Error
+	err := DB.Model(&Follow{}).Where("id", id).Update("cancel", cancel).Error
 
 	//如果err为空不会执行
 	util.Error("通过 id 修改 cancel状态出错啦：", err)
@@ -65,7 +64,7 @@ func GetID(userId, followId int64) (id int64) {
 
 	follow := &Follow{}
 
-	err := DB.Where("user_id", userId).Or("follower_id", followId).First(&Follow{}).Error
+	err := DB.Find(&follow).Where("user_id", userId).Where("follower_id", followId).Error
 
 	//如果err为空不会执行
 	util.Error("获取 id 出错啦：", err)
