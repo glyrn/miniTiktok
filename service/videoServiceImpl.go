@@ -12,6 +12,8 @@ import (
 
 // 定义视频服务实现类
 type VideoServiceImpl struct {
+	// 看视频的时候需要作者信息 所以需要用户信息服务
+	UserService
 }
 
 // 传入当前时间戳， 当前用户id，返回组装好的视频序列，以及视频最早发布的时间
@@ -53,6 +55,17 @@ func (videoService *VideoServiceImpl) buildVideo_services(videos_service *[]Vide
 func (videoService *VideoServiceImpl) creatVideo_service(video *Video_service, video_dao *dao.Video_dao) {
 
 	video.Video_dao = *video_dao
+
+	// 获取作者身份信息
+	var err error
+	video.Author, err = videoService.GetUser_serviceById(video_dao.AuthorId)
+
+	if err != nil {
+		fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行失败 ")
+	}
+
+	fmt.Println("执行成功")
+
 	/**
 	可继续添加字段
 

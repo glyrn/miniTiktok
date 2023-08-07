@@ -50,7 +50,7 @@ func Feed(c *gin.Context) {
 		lastTime = time.Now()
 	}
 
-	videoService := GetFinalVideo()
+	videoService := GetFinalVideoService()
 	feed, nextTime, err := videoService.Feed(lastTime)
 
 	if err != nil {
@@ -69,13 +69,55 @@ func Feed(c *gin.Context) {
 
 }
 
+// 上传视频
+func Publish(context *gin.Context) {
+	data, err := context.FormFile("data")
+	if err != nil {
+		fmt.Println("视频流解析错误")
+		context.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "视频流解析错误",
+		})
+		return
+	}
+
+	userId, err_ := strconv.ParseInt(context.GetString("userId"), 10, 64)
+	if err_ != nil {
+		fmt.Println("用户id解析失败")
+	}
+	fmt.Println("上传视频的用户id：", userId)
+	title := context.PostForm("title")
+	fmt.Println("title:", title)
+
+	videoService := GetFinalVideoService()
+
+	err = videoService.Publish(data, userId, title)
+	if err != nil {
+		fmt.Println("视频上传失败")
+		context.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "视频上传失败",
+		})
+	}
+	fmt.Println("上传视频成功")
+
+	context.JSON(http.StatusOK, Response{
+		StatusCode: 0,
+		StatusMsg:  "",
+	})
+
+}
+
 // 这里组装所有模块的功能到视频业务中
 /**
 视频需要点赞 评论 用户等模块 故选择用视频模块为核心
 */
-func GetFinalVideo() service.VideoServiceImpl {
+func GetFinalVideoService() service.VideoServiceImpl {
 
 	var videoService service.VideoServiceImpl
+	var userService service.UserServiceImpl
+
+	videoService.UserService = &userService
 
 	return videoService
 }

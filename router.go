@@ -17,6 +17,8 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.POST("/user/login/", controller.Login)
 
-	apiRouter.GET("/user/", jwt.Authentication(), controller.UserInfo)
+	apiRouter.GET("/user/", jwt.Authentication4Query(), controller.UserInfo)
+
+	apiRouter.POST("/publish/action/", jwt.Authentication4PostForm(), controller.Publish)
 
 }
