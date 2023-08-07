@@ -34,3 +34,8 @@ func TestInsertFollow(t *testing.T) {
 	follow := Follow{UserId: 3, FollowerId: 4, Cancel: 1}
 	InsertFollow(follow)
 }
+func TestGetID(t *testing.T) {
+	InitDataBase()
+	id := GetID(2, 1)
+	fmt.Println(id)
+}

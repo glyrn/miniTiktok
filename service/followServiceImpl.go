@@ -1,7 +1,6 @@
 package service
 
 import (
-	"fmt"
 	"miniTiktok/dao"
 )
 
@@ -31,10 +30,10 @@ func UpdateCanCelById(id int64, cancel int8) {
 func InsertFollow(userId, toUserId, account int64) {
 	//account 可能传进来为1或2，数据库中是0或1所以减1
 	follow := dao.Follow{UserId: userId, FollowerId: toUserId, Cancel: int8(account - 1)}
-	if account > 0 {
-		id := dao.GetID(userId, toUserId)
+	id := dao.GetID(userId, toUserId)
+
+	if id != 0 {
 		UpdateCanCelById(id, follow.Cancel)
-		fmt.Println(id)
 	} else {
 		dao.InsertFollow(follow)
 	}
