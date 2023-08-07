@@ -28,6 +28,7 @@ func Action(c *gin.Context) {
 		})
 		return
 	}
+	//调用添加功能如actionType等于2自动改为修改功能
 	service.InsertFollow(userId, toUserId, actionType)
 	fmt.Println("关注成功或取消成功")
 	c.JSON(http.StatusOK, followResponse{
