@@ -8,7 +8,7 @@ import (
 // 测试根据 id 查询总关注数
 func TestGetCancelById(t *testing.T) {
 	InitDataBase()
-	cut, err := GetCancelById(2)
+	cut, err := GetCancelById(1)
 	if err != nil {
 		fmt.Println(err)
 	}
