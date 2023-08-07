@@ -1,6 +1,10 @@
 package ffmpeg
 
 import (
+	"bytes"
+	"crypto/aes"
+	"crypto/cipher"
+	"encoding/base64"
 	"fmt"
 	"golang.org/x/crypto/ssh"
 	"miniTiktok/conf"
@@ -20,18 +24,20 @@ type Ffmsg struct {
 var ClientSSH *ssh.Client
 
 func InitSSH() {
+
+	key := []byte(conf.KeyString)
 	var err error
 	//创建sshp登陆配置
 	SSHconfig := &ssh.ClientConfig{
 		Timeout:         5 * time.Second, //ssh 连接time out 时间一秒钟, 如果ssh验证错误 会在一秒内返回
-		User:            conf.UserSSH,
+		User:            decrypt(conf.UserSSH, key),
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //通过密码方式连接服务器，但是不够安全
 
 	}
 
 	// 这里用密码方式连接
 	if conf.TypeSSH == "password" {
-		SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(conf.PasswordSSH)}
+		SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(decrypt(conf.PasswordSSH, key))}
 	}
 	// 登录，创建会话
 	addr := fmt.Sprintf("%s:%d", conf.HostSSH, conf.PortSSH)
@@ -68,4 +74,28 @@ func keepAlive() {
 	time.Sleep(time.Duration(conf.SSHLiveTime) * time.Second)
 	session, _ := ClientSSH.NewSession()
 	session.Close()
+}
+
+func decrypt(text string, key []byte) string {
+	data := []byte(text)
+	parts := bytes.Split(data, []byte("."))
+	nonce, _ := base64.StdEncoding.DecodeString(string(parts[0]))
+	ciphertext, _ := base64.StdEncoding.DecodeString(string(parts[1]))
+
+	block, err := aes.NewCipher(key)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	aesGCM, err := cipher.NewGCM(block)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	plaintext, err := aesGCM.Open(nil, nonce, ciphertext, nil)
+	if err != nil {
+		panic(err.Error())
+	}
+
+	return string(plaintext)
 }
