@@ -50,3 +50,9 @@ func InsertFollow(follow Follow) {
 	util.Error("出错啦:", DB.Create(&follow).Error)
 
 }
+
+func GetID(userId, followId int64) (id int64) {
+	follow := &Follow{}
+	util.Error("出错啦：", DB.Where("user_id", userId).Or("follower_id", followId).First(follow).Error)
+	return follow.Id
+}

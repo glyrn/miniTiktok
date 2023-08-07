@@ -21,4 +21,6 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.POST("/publish/action/", jwt.Authentication4PostForm(), controller.Publish)
 
+	apiRouter.POST("/relation/action/", jwt.Authentication4Query(), controller.Action)
+
 }
