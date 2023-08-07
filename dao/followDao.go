@@ -18,41 +18,57 @@ func (Follow) TableName() string {
 }
 
 // 通过 id 查询用户的总关注数量
-func GetCancelById(userId int64) (int64, error) {
+func GetCancelById(userId int64) int64 {
 
 	var cut int64
 
-	util.Error("出错啦：", DB.Model(&Follow{Cancel: 1}).Where("user_id = ?", userId).Count(&cut).Error)
+	err := DB.Where("user_id = ?", userId).Where("cancel", 0).Find(&Follow{}).Count(&cut).Error
 
-	return cut, nil
+	//如果err为空不会执行
+	util.Error("通过 id 查询用户的总关注数量出错啦：", err)
+
+	return cut
 }
 
 // 通过被关注的 Id 查询总粉丝数
-func GetTotalityByFollowerId(followerId int64) (int64, error) {
+func GetTotalityByFollowerId(followerId int64) int64 {
 	var cut int64
 
-	util.Error("出错啦：", DB.Model(&Follow{Cancel: 1}).Where("follower_id", followerId).Count(&cut).Error)
+	err := DB.Where("follower_id", followerId).Where("cancel", 0).Find(&Follow{}).Count(&cut).Error
 
-	return cut, nil
+	//如果err为空不会执行
+	util.Error("通过被关注的 Id 查询总粉丝数出错啦：", err)
+
+	return cut
 }
 
 // 通过 id 修改 cancel状态
 func UpdateCanCelById(id int64, cancel int8) {
 	var follow = &Follow{Id: id, Cancel: cancel}
 
-	util.Error("出错啦：", DB.Model(&follow).Update("cancel", follow.Cancel).Error)
+	err := DB.Model(&follow).Update("cancel", follow.Cancel).Error
+
+	//如果err为空不会执行
+	util.Error("通过 id 修改 cancel状态出错啦：", err)
 
 }
 
-// 增加数据
+// 添加关注关系
 func InsertFollow(follow Follow) {
 
-	util.Error("出错啦:", DB.Create(&follow).Error)
+	util.Error("添加关注关系出错啦:", DB.Create(&follow).Error)
 
 }
 
+// 获取 id
 func GetID(userId, followId int64) (id int64) {
+
 	follow := &Follow{}
-	util.Error("出错啦：", DB.Where("user_id", userId).Or("follower_id", followId).First(follow).Error)
+
+	err := DB.Where("user_id", userId).Or("follower_id", followId).First(&Follow{}).Error
+
+	//如果err为空不会执行
+	util.Error("获取 id 出错啦：", err)
+
 	return follow.Id
 }

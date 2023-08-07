@@ -3,25 +3,27 @@ package service
 import (
 	"fmt"
 	"miniTiktok/dao"
-	"miniTiktok/util"
 )
 
 // 通过 id 查询用户的总关注数量
-func GetCancelById(userId int64) (int64, error) {
-	cut, err := dao.GetCancelById(userId)
-	util.Error("未知错误： ", err)
-	return cut, nil
+func GetCancelById(userId int64) int64 {
+
+	cut := dao.GetCancelById(userId)
+
+	return cut
 }
 
 // 通过被关注的 Id 查询总粉丝数
-func GetTotalityByFollowerId(followerId int64) (int64, error) {
-	id, err := dao.GetTotalityByFollowerId(followerId)
-	util.Error("未知错误： ", err)
-	return id, nil
+func GetTotalityByFollowerId(followerId int64) int64 {
+
+	id := dao.GetTotalityByFollowerId(followerId)
+
+	return id
 }
 
 // 通过 id 修改 cancel状态
 func UpdateCanCelById(id int64, cancel int8) {
+
 	dao.UpdateCanCelById(id, cancel)
 }
 
@@ -39,12 +41,10 @@ func InsertFollow(userId, toUserId, account int64) {
 
 }
 
+// 根据id获取粉丝和关注总数
 func GetFansDndAttention(id int64) (int64, int64) {
-	cancel, err1 := GetCancelById(id)
-	totality, err2 := GetTotalityByFollowerId(id)
+	cancel := GetCancelById(id)
+	totality := GetTotalityByFollowerId(id)
 
-	if err1 != nil && err2 != nil {
-		return cancel, totality
-	}
-	return 0, 0
+	return cancel, totality
 }
