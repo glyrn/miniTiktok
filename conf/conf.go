@@ -8,8 +8,8 @@ const LiveTime = 120
 
 // HostSSH SSH配置
 const HostSSH = "39.101.72.240"
-const UserSSH = "haha"
-const PasswordSSH = "123456"
+const UserSSH = "7m5GUXUK09tu5jQz.knr4RfKIQA+oo0tR92/xfnIP6JU="
+const PasswordSSH = "tFJ7I5SD5fQQV1Ao.Q/VwOeIhPxg78Dc9hNtd/mPHz1QrYuKlFuczQvHuRw=="
 const TypeSSH = "password"
 const PortSSH = 22
 const MaxMsgCount = 100
@@ -28,3 +28,6 @@ const Pass = "123456"        // 密码
 const Adrr = "39.101.72.240" // 地址
 const Port = "3306"          // 端口
 const Dbname = "tiktok"      // 数据库名称
+
+// 加密算法密钥
+const KeyString = "mysecretkey123456789012345600000"
