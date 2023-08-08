@@ -112,7 +112,7 @@ func DeleteVideoById(id int64) bool {
 // 查询视频
 
 // 通过作者id查询所有的视频 返回视频的切片
-func GetVideoByAuthorId(AuthorId int) ([]Video_dao, error) {
+func GetVideoByAuthorId(AuthorId int64) ([]Video_dao, error) {
 	videoList := []Video_dao{}
 	if err := DB.Where("author_id = ?", AuthorId).Find(&videoList).Error; err != nil {
 		return nil, err
@@ -121,7 +121,7 @@ func GetVideoByAuthorId(AuthorId int) ([]Video_dao, error) {
 }
 
 // 通过作者id 查询 视频id数组
-func GetVideoIdByAuthorId(AuthorId int) ([]int64, error) {
+func GetVideoIdByAuthorId(AuthorId int64) ([]int64, error) {
 	var ids []int64 // 声明一个切片来存储视频id
 	if err := DB.Model(&Video_dao{}).Where("author_id=?", AuthorId).Pluck("id", &ids).Error; err != nil {
 		return ids, err

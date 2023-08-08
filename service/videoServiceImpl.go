@@ -113,3 +113,27 @@ func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId
 	}
 	return nil
 }
+
+// 查看发布的视频列表
+func (videoService VideoServiceImpl) ShowList(authId int64) ([]Video_service, error) {
+
+	video_dao, err := dao.GetVideoByAuthorId(authId)
+
+	if err != nil {
+		fmt.Println("查询视频表错误")
+	}
+	fmt.Println("查询视频表成功")
+
+	// 开始组装视频信息
+
+	videos_service := make([]Video_service, 0, len(video_dao))
+	err = videoService.buildVideo_services(&videos_service, &video_dao)
+
+	if err != nil {
+		fmt.Println("合成视频信息失败")
+		return nil, err
+	}
+	// 合成成功
+	return videos_service, err
+
+}

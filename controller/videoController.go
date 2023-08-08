@@ -22,6 +22,12 @@ type FeedResponse struct {
 	NextTime  int64                   `json:"next_time"`
 }
 
+// 获取视频列表响应码 不带nexttime
+type VideoResponse struct {
+	Response
+	VideoList []service.Video_service `json:"video_list"`
+}
+
 func Feed(c *gin.Context) {
 	// 这里需要的是用户上一次刷视频的时间 方便推送上一次视频之后的视频 由于latest_time字段是可选项 不填代表没看 是当前时间
 	inputTime := c.Query("latest_time")
@@ -104,6 +110,30 @@ func Publish(context *gin.Context) {
 	context.JSON(http.StatusOK, Response{
 		StatusCode: 0,
 		StatusMsg:  "",
+	})
+
+}
+
+// 查找用户发布的视频列表
+func ShowPublishList(context *gin.Context) {
+	userId_string := context.Query("user_id")
+	userId, err := strconv.ParseInt(userId_string, 10, 64)
+	if err != nil {
+		fmt.Println("userId 转化失败")
+	}
+	videoService := GetFinalVideoService()
+	publishList, err := videoService.ShowList(userId)
+	if err != nil {
+		fmt.Println("\tpublishList,err := videoService.ShowList(userId)\n 执行失败")
+		context.JSON(http.StatusOK, VideoResponse{
+			Response: Response{StatusCode: 1, StatusMsg: "获取视频列表失败"},
+		})
+		return
+	}
+	// 视频列表获取成功
+	context.JSON(http.StatusOK, VideoResponse{
+		Response:  Response{StatusCode: 0},
+		VideoList: publishList,
 	})
 
 }
