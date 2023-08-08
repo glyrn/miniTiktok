@@ -19,14 +19,14 @@ func (Comment_dao) TableName() string {
 }
 
 // 发表评论
-func Insert2Comment_dao(comment Comment_dao) bool {
+func Insert2Comment_dao(comment Comment_dao) (Comment_dao, bool) {
 	err := DB.Create(&comment).Error
 	if err != nil {
 		fmt.Println("评论增加失败")
-		return false
+		return Comment_dao{}, false
 	}
 	fmt.Println("评论添加成功")
-	return true
+	return comment, true
 }
 
 // 删除评论
@@ -56,7 +56,7 @@ func DeleteComment_dao(commentId int64) bool {
 func GetCommentListByVideoId(videoId int64) ([]Comment_dao, error) {
 	var commentList []Comment_dao
 
-	result := DB.Model(Comment_dao{}).Where("id = ? AND cancel = ?", videoId, 0).Order("create_date desc").Find(&commentList)
+	result := DB.Model(Comment_dao{}).Where("video_id = ? AND cancel = ?", videoId, 0).Order("create_date desc").Find(&commentList)
 
 	// 查询出错
 	if result.Error != nil {

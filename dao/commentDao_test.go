@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"testing"
 	"time"
 )
@@ -18,13 +19,14 @@ func TestGetCommentCountByVideoId(t *testing.T) {
 
 func TestInsert2Comment_dao(t *testing.T) {
 	InitDataBase()
-	Insert2Comment_dao(Comment_dao{
+	Comment_dao, _ := Insert2Comment_dao(Comment_dao{
 		UserId:      2,
 		VideoId:     1,
 		CommentText: "我要打篮球",
 		CreateDate:  time.Now(),
 		Cancel:      0,
 	})
+	fmt.Println(Comment_dao)
 }
 
 func TestDeleteComment_dao(t *testing.T) {
