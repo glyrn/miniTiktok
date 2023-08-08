@@ -64,7 +64,7 @@ func (videoService *VideoServiceImpl) creatVideo_service(video *Video_service, v
 		fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行失败 ")
 	}
 
-	fmt.Println("执行成功")
+	fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行成功")
 
 	/**
 	可继续添加字段

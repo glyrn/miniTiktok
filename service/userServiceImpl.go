@@ -9,6 +9,9 @@ import (
 )
 
 type UserServiceImpl struct {
+	// 关注模块服务
+	FollowService
+	// 待添加 点赞模块等
 }
 
 func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (dao.User_dao, error) {
@@ -33,22 +36,35 @@ func (UserServiceImpl *UserServiceImpl) Insert2User(user *dao.User_dao) bool {
 
 }
 
+// 未登录状态 获取 根据userID 获取到user组装后得到对象
 func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_service_final, error) {
 	user := User_service_final{
-		Id:   0,
-		Name: "",
+		Id:            0,
+		Name:          "",
+		FollowCount:   0,
+		FollowerCount: 0,
+		IsFollow:      false,
 	}
 	user_dao, err := dao.GetUserById(userId)
 	if err != nil {
 		fmt.Println("获取dao层usr失败")
 		return user, err
 	}
+	fmt.Println("获取dao层usr成功")
+	// 获取关注人数, 被关注人数
+	//followcount, followercount := UserServiceImpl.GetFansDndAttention(userId)
+	//fmt.Println(followcount, followercount)
+	followcount := int64(12)
+	followercount := int64(10)
 
 	// 用户信息获取成功
 	// 组装信息
 	user = User_service_final{
-		Id:   userId,
-		Name: user_dao.Name,
+		Id:            userId,
+		Name:          user_dao.Name,
+		FollowCount:   followcount,
+		FollowerCount: followercount,
+		IsFollow:      false,
 	}
 	fmt.Println(user)
 

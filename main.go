@@ -23,6 +23,7 @@ func main() {
 	}
 }
 
+// 这里是与提供服务的服务器建立连接
 func initDevelops() {
 	dao.InitDataBase()
 	ftp.InitFTP()
