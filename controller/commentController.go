@@ -19,7 +19,7 @@ type CommentActionResponse struct {
 
 type CommentListResponse struct {
 	Response
-	CommentList []service.Comment_service
+	CommentList []service.Comment_service `json:"comment_list,omitempty"`
 }
 
 func CommentAction(context *gin.Context) {
