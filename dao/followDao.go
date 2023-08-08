@@ -26,9 +26,6 @@ func GetCancelById(userId int64) int64 {
 
 	//如果err为空不会执行
 	util.Error("通过 id 查询用户的总关注数量出错啦：", err)
-	if err != nil {
-		return 0
-	}
 
 	return cut
 }
@@ -41,9 +38,7 @@ func GetTotalityByFollowerId(followerId int64) int64 {
 
 	//如果err为空不会执行
 	util.Error("通过被关注的 Id 查询总粉丝数出错啦：", err)
-	if err != nil {
-		return 0
-	}
+
 	return cut
 }
 
