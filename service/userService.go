@@ -25,5 +25,10 @@ type User_service_final struct {
 	Id   int64  `json:"id,omitempty"`
 	Name string `json:"name,omitempty"`
 
+	// 关注字段
+	FollowCount   int64 `json:"follow_count"`   // 关注人数
+	FollowerCount int64 `json:"follower_count"` // 被关注人数
+	IsFollow      bool  `json:"is_follow"`      // 用于作者是否被当前用户关注
+
 	// 待补充 点赞 关注等
 }
