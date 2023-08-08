@@ -26,6 +26,8 @@ func CommentAction(context *gin.Context) {
 	// 获取身份
 	id, flag := context.Get("userId")
 
+	fmt.Println("CommentAction 请求中得到的id是", id)
+
 	if !flag {
 		fmt.Println("获取userId 失败")
 		context.JSON(http.StatusOK, CommentActionResponse{Response: Response{
@@ -44,6 +46,8 @@ func CommentAction(context *gin.Context) {
 		}})
 		fmt.Println("userID获取失败")
 	}
+	fmt.Println("最终的id", userId)
+
 	videoId, err := strconv.ParseInt(context.Query("video_id"), 10, 64)
 
 	if err != nil {
@@ -71,6 +75,8 @@ func CommentAction(context *gin.Context) {
 	if actionType == 1 {
 		// 获取到评论内容
 		content := context.Query("comment_text")
+
+		fmt.Println("获取到评论内容", content)
 
 		var comment_dao dao.Comment_dao
 		comment_dao.UserId = userId
