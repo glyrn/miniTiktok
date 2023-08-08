@@ -54,7 +54,7 @@ func CommentAction(context *gin.Context) {
 		fmt.Println("videoID获取失败")
 	}
 	// 获取操作类型 1 : 评论 2 : 删除
-	actionType, err := strconv.ParseInt(context.Query("action_type"), 10, 64)
+	actionType, err := strconv.ParseInt(context.Query("action_type"), 10, 32)
 	if err != nil || actionType > 2 || actionType < 1 {
 		context.JSON(http.StatusOK, CommentActionResponse{
 			Response: Response{
@@ -70,7 +70,7 @@ func CommentAction(context *gin.Context) {
 
 	if actionType == 1 {
 		// 获取到评论内容
-		content := context.Query("content_text")
+		content := context.Query("comment_text")
 
 		var comment_dao dao.Comment_dao
 		comment_dao.UserId = userId
