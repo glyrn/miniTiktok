@@ -17,8 +17,8 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment_dao dao.Comment_
 	// 先取出基础数据
 	var commentIndao dao.Comment_dao
 	commentIndao.VideoId = comment_dao.VideoId
-	commentIndao.UserId = commentIndao.UserId
-	commentIndao.CommentText = commentIndao.CommentText
+	commentIndao.UserId = comment_dao.UserId
+	commentIndao.CommentText = comment_dao.CommentText
 	commentIndao.Cancel = comment_dao.Cancel
 	commentIndao.CreateDate = comment_dao.CreateDate
 
