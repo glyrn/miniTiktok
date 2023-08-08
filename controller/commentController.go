@@ -54,7 +54,7 @@ func CommentAction(context *gin.Context) {
 		fmt.Println("videoID获取失败")
 	}
 	// 获取操作类型 1 : 评论 2 : 删除
-	actionType, err := strconv.ParseInt(context.Query("action_type"), 10, 32)
+	actionType, err := strconv.ParseInt(context.Query("action_type"), 10, 64)
 	if err != nil || actionType > 2 || actionType < 1 {
 		context.JSON(http.StatusOK, CommentActionResponse{
 			Response: Response{

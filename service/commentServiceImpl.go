@@ -31,7 +31,7 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment_dao dao.Comment_
 	// 存表成功
 	// 调出评论的用户的信息
 	Userimpl := UserServiceImpl{}
-	User_serverFromSearch, err := Userimpl.GetUser_serviceById(comment_dao.Id)
+	User_serverFromSearch, err := Userimpl.GetUser_serviceById(comment_dao.UserId)
 	if err != nil {
 		fmt.Println("用户信息查询错误")
 	}
