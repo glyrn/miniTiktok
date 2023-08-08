@@ -28,4 +28,8 @@ func initRouter(r *gin.Engine) {
 	apiRouter.GET("/relation/follow/list/", jwt.Authentication4Query(), controller.Follow)
 
 	apiRouter.GET("/relation/follower/list/", jwt.Authentication4Query(), controller.Follower)
+
+	apiRouter.GET("/favorite/list/", controller.CommentList)
+
+	apiRouter.POST("/favorite/action/", jwt.Authentication4Query(), controller.CommentAction)
 }
