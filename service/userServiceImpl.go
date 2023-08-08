@@ -14,6 +14,8 @@ type UserServiceImpl struct {
 	// 待添加 点赞模块等
 }
 
+var fsi = FollowServiceImpl{}
+
 func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (dao.User_dao, error) {
 	user_dao, err := dao.GetUserByName(name)
 	if err != nil {
@@ -51,11 +53,14 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 		return user, err
 	}
 	fmt.Println("获取dao层usr成功")
+
 	// 获取关注人数, 被关注人数
 	//followcount, followercount := UserServiceImpl.GetFansDndAttention(userId)
+	followcount, followercount := fsi.GetFansDndAttention(userId)
+
 	//fmt.Println(followcount, followercount)
-	followcount := int64(12)
-	followercount := int64(10)
+	//followcount := int64(12)
+	//followercount := int64(10)
 
 	// 用户信息获取成功
 	// 组装信息
