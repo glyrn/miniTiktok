@@ -64,7 +64,7 @@ func GetID(userId, followId int64) (id int64) {
 
 	follow := &Follow{}
 
-	err := DB.Find(&follow).Where("user_id", userId).Where("follower_id", followId).Error
+	err := DB.Where("user_id", userId).Where("follower_id", followId).Find(&follow).Error
 
 	//如果err为空不会执行
 	util.Error("获取 id 出错啦：", err)
