@@ -34,8 +34,18 @@ func TestInsertFollow(t *testing.T) {
 	follow := Follow{UserId: 3, FollowerId: 4, Cancel: 1}
 	InsertFollow(follow)
 }
+
+// 测试获取Id
 func TestGetID(t *testing.T) {
 	InitDataBase()
 	id := GetID(2, 1)
 	fmt.Println(id)
+}
+
+// 获取粉丝列表和关注列表 ID
+func TestGetFanIdDndFollowList(t *testing.T) {
+	InitDataBase()
+	attentionList, follow := GetFanIdDndFollowList(3)
+	fmt.Println("粉丝列表id", attentionList)
+	fmt.Println("关注列表id", follow)
 }
