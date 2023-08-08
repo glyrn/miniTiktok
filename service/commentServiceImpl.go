@@ -73,7 +73,9 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]Co
 	}
 	Comment_service_list := make([]Comment_service, len(comment_dao_list))
 
-	for index, comment_dao := range comment_dao_list {
+	var index = 0
+	for _, comment_dao := range comment_dao_list {
+
 		var comment_service Comment_service
 		impl := UserServiceImpl{}
 		comment_service.Id = comment_dao.Id
@@ -87,6 +89,7 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]Co
 
 		// 将这个评论放进切片
 		Comment_service_list[index] = comment_service
+		index++
 	}
 	fmt.Println(Comment_service_list)
 	return Comment_service_list, err
