@@ -19,5 +19,5 @@ type CommentService interface {
 
 	// 查看评论列表
 	// 看视频的时候点开评论展示的评论列表
-	GetList(videoId int64) ([]Comment_service, error)
+	GetCommentList(videoId int64) ([]Comment_service, error)
 }
