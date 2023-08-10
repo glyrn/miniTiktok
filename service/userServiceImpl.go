@@ -46,6 +46,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 		FollowCount:   0,
 		FollowerCount: 0,
 		IsFollow:      false,
+		Avatar:        "",
 	}
 	user_dao, err := dao.GetUserById(userId)
 	if err != nil {
@@ -62,6 +63,9 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 	//followcount := int64(12)
 	//followercount := int64(10)
 
+	// 随机头像地址
+	avatarAPI := "https://api.multiavatar.com/" + string(userId) + ".png"
+
 	// 用户信息获取成功
 	// 组装信息
 	user = User_service_final{
@@ -70,6 +74,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 		FollowCount:   followcount,
 		FollowerCount: followercount,
 		IsFollow:      false,
+		Avatar:        avatarAPI,
 	}
 	fmt.Println(user)
 
