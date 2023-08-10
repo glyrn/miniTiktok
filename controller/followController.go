@@ -56,21 +56,21 @@ func Action(c *gin.Context) {
 // 关注列表请求
 func Follow(c *gin.Context) {
 	userId, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
-	userId = 2
+	//userId = 2
 	// 用户id解析出错。
 	if nil != err {
 		c.JSON(http.StatusOK, followResp{
 			Response: Response{
 				StatusCode: -1,
-				StatusMsg:  "用户id格式错误。",
+				StatusMsg:  "用户id格式错误",
 			},
 			UserList: nil,
 		})
 		return
 	}
 	// 正常获取关注列表
-	userList := fsi.GetFanIdOrFollowList("fan", userId)
-	if userList != nil {
+	userList := fsi.GetFanIdOrFollowList("follow", userId)
+	if userList == nil {
 		c.JSON(http.StatusOK, followResp{
 			Response: Response{
 				StatusCode: -1,
@@ -93,22 +93,22 @@ func Follow(c *gin.Context) {
 // 粉丝列表请求
 func Follower(c *gin.Context) {
 	userId, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
-	userId = 2
+	//userId = 2
 	// 用户id解析出错。
 	if nil != err {
 		c.JSON(http.StatusOK, followResp{
 			Response: Response{
 				StatusCode: -1,
-				StatusMsg:  "用户id格式错误。",
+				StatusMsg:  "用户id格式错误",
 			},
 			UserList: nil,
 		})
 		return
 	}
-	// 正常获取关注列表
-	userList := fsi.GetFanIdOrFollowList("follow", userId)
+	// 正常获取粉丝列表
+	userList := fsi.GetFanIdOrFollowList("fan", userId)
 
-	if userList != nil {
+	if userList == nil {
 		c.JSON(http.StatusOK, followResp{
 			Response: Response{
 				StatusCode: -1,
