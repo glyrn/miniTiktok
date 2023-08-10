@@ -2,6 +2,7 @@ package service
 
 import (
 	"miniTiktok/dao"
+	"miniTiktok/entity"
 	"miniTiktok/util"
 )
 
@@ -35,7 +36,7 @@ func UpdateCanCelById(id int64, cancel int8) {
 // 添加或取消关注
 func (fsi *FollowServiceImpl) InsertFollow(userId, toUserId, account int64) {
 	//account 可能传进来为1或2，数据库中是0或1所以减1
-	follow := dao.Follow{UserId: userId, FollowerId: toUserId, Cancel: int8(account - 1)}
+	follow := entity.Follow{UserId: userId, FollowerId: toUserId, Cancel: int8(account - 1)}
 	id := dao.GetID(userId, toUserId)
 
 	if id != 0 {
