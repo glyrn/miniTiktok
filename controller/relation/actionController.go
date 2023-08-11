@@ -8,12 +8,13 @@ import (
 	"strconv"
 )
 
-// 关注列表请求
+// 关注功能请求
 func Action(c *gin.Context) {
 
 	userId, err1 := strconv.ParseInt(c.GetString("userId"), 10, 64)
 	toUserId, err2 := strconv.ParseInt(c.Query("to_user_id"), 10, 64)
 	actionType, err3 := strconv.ParseInt(c.Query("action_type"), 10, 64)
+
 	//防止 actionType 大于2的数进来
 	if nil != err1 || nil != err2 || nil != err3 || actionType < 1 || actionType > 2 {
 		fmt.Printf("关注或取消失败")
