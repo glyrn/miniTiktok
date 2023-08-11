@@ -66,8 +66,12 @@ func (videoService *VideoServiceImpl) creatVideo_service(video *Video_service, v
 
 	fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行成功")
 
+	video.CommentCount, _ = dao.GetCommentCountByVideoId(video_dao.Id)
+
 	/**
 	可继续添加字段
+
+
 
 	调用服务获取字段后可以对video进行装配
 	*/

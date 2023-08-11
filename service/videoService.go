@@ -8,7 +8,8 @@ import (
 
 type Video_service struct {
 	dao.Video_dao
-	Author User_service_final `json:"author"`
+	Author       User_service_final `json:"author"`
+	CommentCount int64              `json:"comment_count,omitempty"`
 	// 待组装视频字段
 }
 
