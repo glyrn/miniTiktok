@@ -64,7 +64,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 	//followercount := int64(10)
 
 	// 随机头像地址
-	avatarAPI := "https://api.multiavatar.com/" + string(userId) + ".png"
+	avatarAPI := "https://api.multiavatar.com/" + strconv.FormatInt(userId, 10) + ".png"
 
 	// 用户信息获取成功
 	// 组装信息
