@@ -17,7 +17,7 @@ func main() {
 	initRouter(r)
 
 	// 在端口8080上启动HTTP服务器并监听
-	err := r.Run(":8080")
+	err := r.Run(":8082")
 	if err != nil {
 		fmt.Println("启动HTTP服务器失败:", err)
 	}

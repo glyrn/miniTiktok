@@ -56,20 +56,26 @@ func (fsi *FollowServiceImpl) GetFansDndAttention(id int64) (int64, int64) {
 }
 
 // 获取用户粉丝列表和关注列表
-func GetFanIdDndFollowList(id int64) ([]dao.User_dao, []dao.User_dao) {
+func GetFanIdDndFollowList(id int64) ([]User_service_final, []User_service_final) {
 
 	//获取粉丝列表和关注列表Id
 	fanIdList, followIdList := dao.GetFanIdDndFollowList(id)
 
-	var fanList, followList []dao.User_dao
+	//var fanList, followList []dao.User_dao
+	var fanList, followList []User_service_final
+
+	impl := UserServiceImpl{}
+
 	//取粉丝用户和关注用户
 	for _, fanId := range fanIdList {
-		userList, err := dao.GetUserById(fanId)
+		//userList, err := dao.GetUserById(fanId)
+		userList, err := impl.GetUser_serviceById(fanId)
 		util.Error("获取粉丝列表失败", err)
 		fanList = append(fanList, userList)
 	}
 	for _, followId := range followIdList {
-		userList, err := dao.GetUserById(followId)
+		//userList, err := dao.GetUserById(followId)
+		userList, err := impl.GetUser_serviceById(followId)
 		util.Error("获取关注列表失败", err)
 		followList = append(followList, userList)
 	}
@@ -77,7 +83,7 @@ func GetFanIdDndFollowList(id int64) ([]dao.User_dao, []dao.User_dao) {
 }
 
 // 进行以粉丝列表和关注列表的区分，可以只获取一个,这里通过 str 进行分流
-func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []dao.User_dao {
+func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []User_service_final {
 	//获取粉丝列表和关注列表Id
 	fanIdList, followIdList := GetFanIdDndFollowList(userId)
 	switch {

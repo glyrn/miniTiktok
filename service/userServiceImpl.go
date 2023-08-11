@@ -10,7 +10,7 @@ import (
 
 type UserServiceImpl struct {
 	// 关注模块服务
-	FollowService
+	//FollowService
 	// 待添加 点赞模块等
 }
 
