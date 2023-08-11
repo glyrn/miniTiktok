@@ -26,12 +26,24 @@ func TestInsert2Likes_dao(t *testing.T) {
 	})
 }
 
+// 取消点赞
 func TestDeleteLikesByUserId(t *testing.T) {
 	InitDataBase()
-	bl := DeleteLikesByUserId(2)
+	bl := DeleteLikesByUserId(2, 2)
 	if bl {
 		fmt.Print("已取消")
 	} else {
 		fmt.Println("取消失败")
+	}
+}
+
+// 更新cancel，也就是恢复点赞
+func TestUpdateLikesByUserId(t *testing.T) {
+	InitDataBase()
+	_,bl := UpdateLikesByUserId(2, 2)
+	if bl {
+		fmt.Print("已恢复点赞")
+	} else {
+		fmt.Println("点赞恢复失败")
 	}
 }

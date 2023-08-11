@@ -60,7 +60,13 @@ func Authentication4PostForm() gin.HandlerFunc {
 			})
 		}
 		// JWT 规范问题 第一个bearer 第二个才是token 所以这里需要先对字符串进行切片
-		authmsg = strings.Fields(authmsg)[1]
+		fields := strings.Fields(authmsg)
+		if len(fields) >= 2 {
+			authmsg = fields[1]
+		} else {
+			authmsg = fields[0]
+		}
+
 		// 解析token
 		token, err := service.ParseToken(authmsg)
 		if err != nil {
