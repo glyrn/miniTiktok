@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"miniTiktok/entity"
 	"testing"
 )
 
@@ -31,7 +32,7 @@ func TestUpdateCanCelById(t *testing.T) {
 // 测试添加数据添加操作
 func TestInsertFollow(t *testing.T) {
 	InitDataBase()
-	follow := Follow{UserId: 3, FollowerId: 4, Cancel: 1}
+	follow := entity.Follow{UserId: 3, FollowerId: 4, Cancel: 1}
 	InsertFollow(follow)
 }
 
