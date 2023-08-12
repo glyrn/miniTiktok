@@ -100,6 +100,41 @@ func (likesServiceImpl LikeServiceImpl) GetLikeList(videoId int64) ([]Likes_serv
 	fmt.Println(Likes_service_list)
 	return Likes_service_list, err
 }
+
+func (likesServiceImpl LikeServiceImpl) GetLikeListByUserId(userId int64) ([]Likes_service, error) {
+	// 查询数据表中评论列表信息
+	likes_dao_list, err := dao.GetLikesListByUserId(userId)
+	if err != nil {
+		fmt.Println("查询点赞列表错误")
+		return nil, err
+	}
+	if likes_dao_list == nil {
+		fmt.Println("该用户无点赞")
+		return nil, nil
+	}
+	Likes_service_list := make([]Likes_service, len(likes_dao_list))
+
+	var index = 0
+	for _, likes_dao := range likes_dao_list {
+
+		var likes_service Likes_service
+		impl := UserServiceImpl{}
+		likes_service.Id = likes_dao.Id
+		likes_service.CreateDate = likes_dao.CreateDate.Format("2006-01-02 15:04:05")
+		likes_service.User_service, err = impl.GetUser_serviceById(likes_dao.UserId)
+
+		if err != nil {
+			fmt.Println("获取点赞信息失败")
+		}
+
+		// 点赞入放进切片
+		Likes_service_list[index] = likes_service
+		index++
+	}
+	fmt.Println(Likes_service_list)
+	return Likes_service_list, err
+}
+
 func (likesServiceImpl LikeServiceImpl) GetLikesCountByVideoId(videoId int64) int64 {
 	count, err := dao.GetLikesCountByVideoId(videoId)
 	if err != nil {

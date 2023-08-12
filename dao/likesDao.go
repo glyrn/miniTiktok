@@ -112,3 +112,28 @@ func UpdateLikesByUserId(UserId int64, VideoId int64) (Likes_dao, bool) {
 	fmt.Println("该用户的点赞已经恢复")
 	return likes_dao, true
 }
+
+// 后期补的
+// 根据用户的id 获取点赞列表
+func GetLikesListByUserId(userId int64) ([]Likes_dao, error) {
+	var likesList []Likes_dao
+
+	result := DB.Model(Likes_dao{}).Where("user_id = ? AND cancel = ?", userId, 0).Find(&likesList)
+
+	// 查询出错
+	if result.Error != nil {
+		fmt.Println("查询点赞数出错", result.Error.Error())
+		return likesList, result.Error
+	}
+
+	// 数量为0
+	if result.RowsAffected == 0 {
+		fmt.Println("该视频点赞数为0")
+		return nil, nil
+	}
+
+	fmt.Println("找到点赞列表")
+	//这里最好还是选择返回user_id而不是全部，但是目前还不知道咋搞
+	fmt.Println(likesList)
+	return likesList, nil
+}

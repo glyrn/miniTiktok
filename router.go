@@ -40,7 +40,7 @@ func initRouter(r *gin.Engine) {
 	apiRouter.GET("/relation/friend/list/", jwt.Authentication4Query(), relation.Friend)
 
 	//点赞的接口
-	apiRouter.GET("/favorite/action/", jwt.Authentication4Query(), controller.LikesAction)
+	apiRouter.POST("/favorite/action/", jwt.Authentication4Query(), controller.LikesAction)
 	//用户的点赞列表
 	apiRouter.GET("/favorite/list/", controller.LikesList)
 }
