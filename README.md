@@ -8,7 +8,13 @@
 [![License](https://img.shields.io/badge/license-MIT-blue.svg?color=orange)](https://opensource.org/licenses/MIT)
 [![Version](https://img.shields.io/badge/version-1.0.0-green.svg?color=brightgreen)](https://github.com/glyrn/miniTiktok/releases/tag/miniTiktok)
 
-
+[![Build Status](https://travis-ci.org/glyrn/miniTiktok.svg?branch=master)](https://travis-ci.org/glyrn/miniTiktok)
+[![Code Coverage](https://codecov.io/gh/glyrn/miniTiktok/branch/master/graph/badge.svg)](https://codecov.io/gh/glyrn/miniTiktok)
+[![Dependencies](https://david-dm.org/glyrn/miniTiktok.svg)](https://david-dm.org/glyrn/miniTiktok)
+[![Downloads](https://img.shields.io/npm/dm/miniTiktok.svg)](https://www.npmjs.com/package/miniTiktok)
+[![Contributors](https://img.shields.io/github/contributors/glyrn/miniTiktok.svg)](https://github.com/glyrn/miniTiktok/graphs/contributors)
+[![Open Issues](https://img.shields.io/github/issues/glyrn/miniTiktok.svg)](https://github.com/glyrn/miniTiktok/issues)
+[![Merged PRs](https://img.shields.io/github/issues-pr-closed/glyrn/miniTiktok.svg)](https://github.com/glyrn/miniTiktok/pulls?q=is%3Apr+is%3Aclosed)
 
 
 > A mini TikTok clone with cool features.
