@@ -3,6 +3,7 @@ package service
 import (
 	"miniTiktok/dao"
 	"miniTiktok/entity"
+	"miniTiktok/pojo"
 	"miniTiktok/util"
 )
 
@@ -56,13 +57,13 @@ func (fsi *FollowServiceImpl) GetFansDndAttention(id int64) (int64, int64) {
 }
 
 // 获取用户粉丝列表和关注列表
-func GetFanIdDndFollowList(id int64) ([]User_service_final, []User_service_final) {
+func GetFanIdDndFollowList(id int64) ([]pojo.User, []pojo.User) {
 
 	//获取粉丝列表和关注列表Id
 	fanIdList, followIdList := dao.GetFanIdDndFollowList(id)
 
 	//var fanList, followList []dao.User_dao
-	var fanList, followList []User_service_final
+	var fanList, followList []pojo.User
 
 	impl := UserServiceImpl{}
 
@@ -83,7 +84,7 @@ func GetFanIdDndFollowList(id int64) ([]User_service_final, []User_service_final
 }
 
 // 进行以粉丝列表和关注列表的区分，可以只获取一个,这里通过 str 进行分流
-func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []User_service_final {
+func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []pojo.User {
 	//获取粉丝列表和关注列表Id
 	fanIdList, followIdList := GetFanIdDndFollowList(userId)
 	switch {

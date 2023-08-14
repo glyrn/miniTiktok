@@ -1,7 +1,7 @@
 package service
 
 import (
-	"miniTiktok/dao"
+	"miniTiktok/entity"
 )
 
 type FollowService interface {
@@ -13,5 +13,5 @@ type FollowService interface {
 	GetFansDndAttention(id int64) (int64, int64)
 
 	// 获取用户粉丝列表或关注列表 fan  follow
-	GetFanIdOrFollowList(str string, userId int64) []dao.User_dao
+	GetFanIdOrFollowList(str string, userId int64) []entity.User
 }

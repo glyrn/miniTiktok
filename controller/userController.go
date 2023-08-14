@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"miniTiktok/dao"
+	"miniTiktok/entity"
+	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -19,7 +20,7 @@ type LoginResponse struct {
 // 用户的所有信息返回
 type UserInfoResponse struct {
 	Response
-	User service.User_service_final
+	User pojo.User
 }
 
 func Register(context *gin.Context) {
@@ -46,7 +47,7 @@ func Register(context *gin.Context) {
 	} else {
 		// 进入注册流程
 		fmt.Println("开始注册")
-		User := dao.User_dao{
+		User := entity.User{
 			Name:     userName,
 			Password: passWord,
 		}

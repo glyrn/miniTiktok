@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"miniTiktok/dao"
+	"miniTiktok/entity"
 	"testing"
 )
 
@@ -10,8 +11,8 @@ func TestInsert2User(t *testing.T) {
 
 	dao.InitDataBase()
 	userServiceImpl := UserServiceImpl{}
-	user := &dao.User_dao{
-		Name:     "test5",
+	user := &entity.User{
+		Name:     "test555",
 		Password: "123456",
 	}
 	userServiceImpl.Insert2User(user)
@@ -35,7 +36,7 @@ func TestGetUser_serviceById(t *testing.T) {
 
 func TestCreateTokenByUser_dao(t *testing.T) {
 
-	user := dao.User_dao{
+	user := entity.User{
 		Id:       1,
 		Name:     "test1",
 		Password: "123456",

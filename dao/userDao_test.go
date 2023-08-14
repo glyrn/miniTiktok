@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"miniTiktok/entity"
 	"testing"
 )
 
@@ -9,8 +10,8 @@ func TestInsert2UserTable(t *testing.T) {
 
 	InitDataBase()
 
-	user := &User_dao{
-		Name:     "alialiyun",
+	user := &entity.User{
+		Name:     "awq",
 		Password: "123456",
 	}
 
@@ -52,7 +53,7 @@ func TestDeleteUserById(t *testing.T) {
 
 func TestUpdateUser(t *testing.T) {
 	InitDataBase()
-	user := User_dao{
+	user := entity.User{
 		Id:       1,
 		Name:     "jack",
 		Password: "123456",

@@ -1,11 +1,14 @@
 package service
 
-import "miniTiktok/dao"
+import (
+	"miniTiktok/dao"
+	"miniTiktok/pojo"
+)
 
 type Likes_service struct {
-	Id           int64              `json:"id,omitempty"`
-	User_service User_service_final `json:"user,omitempty"`
-	CreateDate   string             `json:"create_date"`
+	Id           int64     `json:"id,omitempty"`
+	User_service pojo.User `json:"user,omitempty"`
+	CreateDate   string    `json:"create_date"`
 }
 
 type LikeService interface {

@@ -6,7 +6,9 @@ import (
 	"mime/multipart"
 	"miniTiktok/conf"
 	"miniTiktok/dao"
+	"miniTiktok/entity"
 	"miniTiktok/midddleWare/ffmpeg"
+	"miniTiktok/pojo"
 	"time"
 )
 
@@ -16,11 +18,17 @@ type VideoServiceImpl struct {
 	UserService
 }
 
+func NewVideoService(userService UserService) *VideoServiceImpl {
+	return &VideoServiceImpl{
+		UserService: userService,
+	}
+}
+
 // 传入当前时间戳， 当前用户id，返回组装好的视频序列，以及视频最早发布的时间
-func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]Video_service, time.Time, error) {
+func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, time.Time, error) {
 	// 创建返回的视频数组切片
 	// 这里通过VideoCount来限制预加载数量 ，同时预制切片容量 提高性能
-	videos_service := make([]Video_service, 0, conf.VideoCount)
+	videos_service := make([]pojo.Video, 0, conf.VideoCount)
 	// 根据传入的当前时间，获取传入时间前n个视频
 	Videos_dao, err := dao.GetVideosByCurTime(lastTime)
 	if err != nil {
@@ -28,8 +36,14 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]Video_service, 
 		return nil, time.Time{}, err
 	}
 	fmt.Println("获取前n个视频成功")
+	//
+	fmt.Println(1)
+	//
 	// 组装视频数据 这里把dao层的视频数据 与其他数据进行整合 拼装成新的视频数据
 	err = videoService.buildVideo_services(&videos_service, &Videos_dao)
+	//
+	fmt.Println(2)
+	//
 	if err != nil {
 		fmt.Println("组装video信息失败")
 		return nil, time.Time{}, err
@@ -42,22 +56,29 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]Video_service, 
 }
 
 // 对返回的 结果集 进行装箱
-func (videoService *VideoServiceImpl) buildVideo_services(videos_service *[]Video_service, data *[]dao.Video_dao) error {
+func (videoService *VideoServiceImpl) buildVideo_services(videos_service *[]pojo.Video, data *[]entity.Video) error {
 	for _, temp := range *data {
-		var video_service Video_service
+		var video_service pojo.Video
 		videoService.creatVideo_service(&video_service, &temp)
+		//
+		fmt.Println(video_service)
+		//
 		*videos_service = append(*videos_service, video_service)
 	}
 	return nil
 }
 
 // 对单个video数据单元进行组装，添加想要的信息，拼装数据库中的数据
-func (videoService *VideoServiceImpl) creatVideo_service(video *Video_service, video_dao *dao.Video_dao) {
+func (videoService *VideoServiceImpl) creatVideo_service(video *pojo.Video, video_dao *entity.Video) {
 
-	video.Video_dao = *video_dao
+	video.Video = *video_dao
 
 	// 获取作者身份信息
 	var err error
+
+	test, _ := videoService.GetUser_serviceById(video_dao.AuthorId)
+	fmt.Println(test)
+
 	video.Author, err = videoService.GetUser_serviceById(video_dao.AuthorId)
 
 	if err != nil {
@@ -119,7 +140,7 @@ func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId
 }
 
 // 查看发布的视频列表
-func (videoService VideoServiceImpl) ShowList(authId int64) ([]Video_service, error) {
+func (videoService VideoServiceImpl) ShowList(authId int64) ([]pojo.Video, error) {
 
 	video_dao, err := dao.GetVideoByAuthorId(authId)
 
@@ -130,7 +151,7 @@ func (videoService VideoServiceImpl) ShowList(authId int64) ([]Video_service, er
 
 	// 开始组装视频信息
 
-	videos_service := make([]Video_service, 0, len(video_dao))
+	videos_service := make([]pojo.Video, 0, len(video_dao))
 	err = videoService.buildVideo_services(&videos_service, &video_dao)
 
 	if err != nil {

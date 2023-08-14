@@ -3,7 +3,8 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
-	"miniTiktok/dao"
+	"miniTiktok/entity"
+	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -14,12 +15,12 @@ import (
 
 type CommentActionResponse struct {
 	Response
-	Comment service.Comment_service `json:"comment,omitempty"`
+	Comment pojo.Comment `json:"comment,omitempty"`
 }
 
 type CommentListResponse struct {
 	Response
-	CommentList []service.Comment_service `json:"comment_list,omitempty"`
+	CommentList []pojo.Comment `json:"comment_list,omitempty"`
 }
 
 func CommentAction(context *gin.Context) {
@@ -78,7 +79,7 @@ func CommentAction(context *gin.Context) {
 
 		fmt.Println("获取到评论内容", content)
 
-		var comment_dao dao.Comment_dao
+		var comment_dao entity.Comment
 		comment_dao.UserId = userId
 		comment_dao.VideoId = videoId
 		comment_dao.CommentText = content

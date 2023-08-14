@@ -4,22 +4,26 @@ import (
 	"fmt"
 	"io"
 	"miniTiktok/conf"
+	"miniTiktok/entity"
 	"miniTiktok/midddleWare/ftp"
 	"time"
 )
 
-type Video_dao struct {
-	Id          int64  `json:"id"`
-	AuthorId    int64  `json:"author_id"`
-	PlayUrl     string `json:"play_url"`
-	CoverUrl    string `json:"cover_url"`
-	PublishTime time.Time
-	Title       string `json:"title"`
-}
+//type Video_dao struct {
+//	Id          int64  `json:"id"`
+//	AuthorId    int64  `json:"author_id"`
+//	PlayUrl     string `json:"play_url"`
+//	CoverUrl    string `json:"cover_url"`
+//	PublishTime time.Time
+//	Title       string `json:"title"`
+//}
+//
+//func (Video_dao Video_dao) TableName() string {
+//	return "videos"
+//}
 
-func (Video_dao Video_dao) TableName() string {
-	return "videos"
-}
+// 定义全局变量
+var Video = entity.Video{}
 
 // 将图片上传到ftp服务器
 func PostImage2FTP(file io.Reader, imageName string) error {
@@ -65,7 +69,7 @@ func PostVideo2FTP(file io.Reader, videoName string) error {
 这个函数非必要不调用 （影响自增主键）
 */
 // 增加新的视频信息
-func InsertVideo(video *Video_dao) bool {
+func InsertVideo(video *entity.Video) bool {
 	if err := DB.Create(video).Error; err != nil {
 		fmt.Println(err)
 		//添加失败
@@ -82,15 +86,15 @@ func InsertVideo(video *Video_dao) bool {
 // 这里不传入id 进行自增
 // 也可以用于修改视频信息
 func SaveVideoInfo(videoName string, imageName string, authorId int64, title string) error {
-	var video Video_dao
-	video.PublishTime = time.Now()
-	video.AuthorId = authorId
-	video.Title = title
-	// 这里进行拼接 url 访问地址
-	video.PlayUrl = conf.PlayUrlPre + videoName + ".mp4"
-	video.CoverUrl = conf.CoverUrlPre + imageName + ".jpg"
 
-	if result := DB.Save(&video); result.Error != nil {
+	Video.PublishTime = time.Now()
+	Video.AuthorId = authorId
+	Video.Title = title
+	// 这里进行拼接 url 访问地址
+	Video.PlayUrl = conf.PlayUrlPre + videoName + ".mp4"
+	Video.CoverUrl = conf.CoverUrlPre + imageName + ".jpg"
+
+	if result := DB.Save(&Video); result.Error != nil {
 		return result.Error
 	}
 	return nil
@@ -101,7 +105,7 @@ func SaveVideoInfo(videoName string, imageName string, authorId int64, title str
 // 通过id删除
 func DeleteVideoById(id int64) bool {
 
-	if err := DB.Where("id = ?", id).Delete(&Video_dao{}).Error; err != nil {
+	if err := DB.Where("id = ?", id).Delete(&Video).Error; err != nil {
 		return false
 	}
 	return true
@@ -112,8 +116,8 @@ func DeleteVideoById(id int64) bool {
 // 查询视频
 
 // 通过作者id查询所有的视频 返回视频的切片
-func GetVideoByAuthorId(AuthorId int64) ([]Video_dao, error) {
-	videoList := []Video_dao{}
+func GetVideoByAuthorId(AuthorId int64) ([]entity.Video, error) {
+	videoList := []entity.Video{}
 	if err := DB.Where("author_id = ?", AuthorId).Find(&videoList).Error; err != nil {
 		return nil, err
 	}
@@ -123,15 +127,15 @@ func GetVideoByAuthorId(AuthorId int64) ([]Video_dao, error) {
 // 通过作者id 查询 视频id数组
 func GetVideoIdByAuthorId(AuthorId int64) ([]int64, error) {
 	var ids []int64 // 声明一个切片来存储视频id
-	if err := DB.Model(&Video_dao{}).Where("author_id=?", AuthorId).Pluck("id", &ids).Error; err != nil {
+	if err := DB.Model(&entity.Video{}).Where("author_id=?", AuthorId).Pluck("id", &ids).Error; err != nil {
 		return ids, err
 	}
 	return ids, nil
 }
 
 // 通过videoId查视频
-func GetVideoByVideoId(Id int64) (Video_dao, error) {
-	video := Video_dao{}
+func GetVideoByVideoId(Id int64) (entity.Video, error) {
+	video := entity.Video{}
 	if err := DB.Where("id=?", Id).First(&video).Error; err != nil {
 		return video, err
 	}
@@ -139,8 +143,8 @@ func GetVideoByVideoId(Id int64) (Video_dao, error) {
 }
 
 // 根据当前时间查询当前时间之前的n个视频数组
-func GetVideosByCurTime(curTime time.Time) ([]Video_dao, error) {
-	var videos []Video_dao
+func GetVideosByCurTime(curTime time.Time) ([]entity.Video, error) {
+	var videos []entity.Video
 
 	// 使用GORM的链式调用查询并按照距离targetTime最近的时间进行排序
 	if err := DB.Where("publish_time <= ?", curTime).Order("publish_time desc").

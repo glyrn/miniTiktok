@@ -3,6 +3,7 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -18,14 +19,14 @@ type Response struct {
 // feed流响应码
 type FeedResponse struct {
 	Response
-	VideoList []service.Video_service `json:"video_list"`
-	NextTime  int64                   `json:"next_time"`
+	VideoList []pojo.Video `json:"video_list"`
+	NextTime  int64        `json:"next_time"`
 }
 
 // 获取视频列表响应码 不带nexttime
 type VideoResponse struct {
 	Response
-	VideoList []service.Video_service `json:"video_list"`
+	VideoList []pojo.Video `json:"video_list"`
 }
 
 func Feed(c *gin.Context) {

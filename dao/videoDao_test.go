@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"miniTiktok/entity"
 	"miniTiktok/midddleWare/ftp"
 	"os"
 	"testing"
@@ -36,7 +37,7 @@ func TestPostVideo2FTP(t *testing.T) {
 
 func TestInsertVideo(t *testing.T) {
 	InitDataBase()
-	video := Video_dao{
+	video := entity.Video{
 		Id:          6,
 		AuthorId:    12,
 		PlayUrl:     "_s",

@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"miniTiktok/dao"
+	"miniTiktok/entity"
+	"miniTiktok/pojo"
 	"strconv"
 	"time"
 )
@@ -16,7 +18,7 @@ type UserServiceImpl struct {
 
 var fsi = FollowServiceImpl{}
 
-func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (dao.User_dao, error) {
+func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (entity.User, error) {
 	user_dao, err := dao.GetUserByName(name)
 	if err != nil {
 		fmt.Println("用户不存在与数据库")
@@ -27,7 +29,7 @@ func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (dao.User_dao
 	return user_dao, nil
 }
 
-func (UserServiceImpl *UserServiceImpl) Insert2User(user *dao.User_dao) bool {
+func (UserServiceImpl *UserServiceImpl) Insert2User(user *entity.User) bool {
 
 	if dao.Insert2User(user) == false {
 		fmt.Println("数据插入失败")
@@ -39,8 +41,8 @@ func (UserServiceImpl *UserServiceImpl) Insert2User(user *dao.User_dao) bool {
 }
 
 // 未登录状态 获取 根据userID 获取到user组装后得到对象
-func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_service_final, error) {
-	user := User_service_final{
+func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.User, error) {
+	user := pojo.User{
 		Id:            0,
 		Name:          "",
 		FollowCount:   0,
@@ -68,7 +70,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (User_
 
 	// 用户信息获取成功
 	// 组装信息
-	user = User_service_final{
+	user = pojo.User{
 		Id:            userId,
 		Name:          user_dao.Name,
 		FollowCount:   followcount,
@@ -94,7 +96,7 @@ func CreateTokenByUserName(userName string) string {
 
 // 这里是用于注入payload部分
 // 根据user信息创建token
-func CreateTokenByUser_dao(user dao.User_dao) string {
+func CreateTokenByUser_dao(user entity.User) string {
 
 	fmt.Println("开始合成token")
 
