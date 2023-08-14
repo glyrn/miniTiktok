@@ -5,6 +5,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 	"miniTiktok/conf"
+	"time"
 )
 
 var DB *gorm.DB
@@ -30,10 +31,20 @@ func InitDataBase() {
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True&loc=Local", conf.user, conf.pass, conf.adrr, conf.port, conf.dbname)
 
 	// 连接数据库
-	db, err := gorm.Open(mysql.Open(dsn))
+	db, err := gorm.Open(mysql.Open(dsn), &gorm.Config{
+		PrepareStmt:            true, // 开启预编译
+		SkipDefaultTransaction: true, // 跳过默认事务
+
+	})
 	if err != nil {
 		panic("数据库连接失败" + err.Error())
 	}
+
+	//配置连接池
+	sqlDB, err := db.DB()
+	sqlDB.SetMaxIdleConns(20)           // 设置最大空闲连接数
+	sqlDB.SetMaxOpenConns(100)          // 设置最大打开连接数
+	sqlDB.SetConnMaxLifetime(time.Hour) // 设置连接最大生命周期
 
 	// 连接成功
 	DB = db
