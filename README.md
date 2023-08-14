@@ -2,7 +2,6 @@
 青训营结课项目
 ---
 
-# miniTiktok
 
 [![GitHub Stars](https://img.shields.io/github/stars/glyrn/miniTiktok.svg?color=ff69b4)](https://github.com/glyrn/miniTiktok/stargazers)
 [![GitHub Forks](https://img.shields.io/github/forks/glyrn/miniTiktok.svg?color=blue)](https://github.com/glyrn/miniTiktok/network/members)
