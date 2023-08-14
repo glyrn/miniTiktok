@@ -1,6 +1,7 @@
 # miniTiktok
 青训营结课项目
 ---
+![cxk](https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSw0WJcd_pZHpk57iiLvF77MQFYblqnZdmlhxFqpR-5gg&s)
 
 
 [![GitHub Stars](https://img.shields.io/github/stars/glyrn/miniTiktok.svg?color=ff69b4)](https://github.com/glyrn/miniTiktok/stargazers)
