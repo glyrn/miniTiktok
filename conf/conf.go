@@ -12,7 +12,6 @@ const UserSSH = "7m5GUXUK09tu5jQz.knr4RfKIQA+oo0tR92/xfnIP6JU="
 const PasswordSSH = "tFJ7I5SD5fQQV1Ao.Q/VwOeIhPxg78Dc9hNtd/mPHz1QrYuKlFuczQvHuRw=="
 const TypeSSH = "password"
 const PortSSH = 22
-const MaxMsgCount = 100
 const SSHLiveTime = 10 * 60
 
 // VideoCount 每次获取视频流的数量
@@ -31,3 +30,6 @@ const Dbname = "tiktok"      // 数据库名称
 
 // 加密算法密钥
 const KeyString = "mysecretkey123456789012345600000"
+
+// jwt密钥
+const JwtKey = "123456"

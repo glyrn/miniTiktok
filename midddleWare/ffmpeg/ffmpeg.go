@@ -13,7 +13,7 @@ import (
 
 /**
 这里是在服务器安装了ffmpeg，然后通过ssh远程连接服务器
-调用shell命令，完成视频截图，并储存在指定的位置
+调用shell命令，完成视频截图，并储存在服务器的指定的位置
 */
 
 type Ffmsg struct {

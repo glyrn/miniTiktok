@@ -3,6 +3,7 @@ package service
 import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
+	"miniTiktok/conf"
 	"miniTiktok/dao"
 	"miniTiktok/entity"
 	"miniTiktok/pojo"
@@ -118,7 +119,7 @@ func CreateTokenByUser_dao(user entity.User) string {
 		Subject: "token",
 	}
 
-	var jwtSecret = []byte("123456") // 这里使加密算法的私钥  token需要同时有公钥和私钥才能解析
+	var jwtSecret = []byte(conf.JwtKey) // 这里使加密算法的私钥  token需要同时有公钥和私钥才能解析
 
 	//用加密算法生成标准JWT结构体
 	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
@@ -145,8 +146,8 @@ func ParseToken(token string) (*jwt.StandardClaims, error) {
 	// 使用 jwt.ParseWithClaims 解析 JWT 令牌并提取 StandardClaims 负载。
 	// 使用提供的字节切片  作为签名验证所需的密钥。
 	jwtToken, err := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-		fmt.Println([]byte("123456"))
-		return []byte("123456"), nil
+		fmt.Println([]byte(conf.JwtKey))
+		return []byte(conf.JwtKey), nil
 	})
 
 	// 检查解析和验证是否成功 (err == nil)，以及 jwtToken 是否非空。
