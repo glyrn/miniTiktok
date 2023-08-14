@@ -4,10 +4,12 @@
 
 # miniTiktok
 
-[![GitHub Stars](https://img.shields.io/github/stars/glyrn/miniTiktok.svg)](https://github.com/glyrn/miniTiktok/stargazers)
-[![GitHub Forks](https://img.shields.io/github/forks/glyrn/miniTiktok.svg)](https://github.com/glyrn/miniTiktok/network/members)
-[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-[![Version](https://img.shields.io/badge/version-1.0.0-green.svg)](https://github.com/glyrn/miniTiktok/releases/tag/miniTiktok)
+[![GitHub Stars](https://img.shields.io/github/stars/glyrn/miniTiktok.svg?color=ff69b4)](https://github.com/glyrn/miniTiktok/stargazers)
+[![GitHub Forks](https://img.shields.io/github/forks/glyrn/miniTiktok.svg?color=blue)](https://github.com/glyrn/miniTiktok/network/members)
+[![License](https://img.shields.io/badge/license-MIT-blue.svg?color=orange)](https://opensource.org/licenses/MIT)
+[![Version](https://img.shields.io/badge/version-1.0.0-green.svg?color=brightgreen)](https://github.com/glyrn/miniTiktok/releases/tag/miniTiktok)
+
+
 
 
 > A mini TikTok clone with cool features.
