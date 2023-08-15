@@ -155,16 +155,31 @@ func CommentList(context *gin.Context) {
 	}
 	// 获取评论列表
 	commentService := new(service.CommentServiceImpl)
-	commentList, err := commentService.GetCommentList(videoId)
+
+	// 先读缓存
+	commentList, err := commentService.GetCommentListFromRedis(videoId)
+
+	// 未命中
 	if err != nil {
-		fmt.Println("获取评论列表失败")
-		fmt.Println("err")
-		context.JSON(http.StatusOK, CommentListResponse{Response: Response{
-			StatusCode: -1,
-			StatusMsg:  "获取评论列表失败",
-		}})
-		return
+
+		fmt.Println("从数据库中查评论列表")
+
+		commentList, err = commentService.GetCommentList(videoId)
+
+		if err != nil {
+			fmt.Println("获取评论列表失败")
+			fmt.Println("err")
+			context.JSON(http.StatusOK, CommentListResponse{Response: Response{
+				StatusCode: -1,
+				StatusMsg:  "获取评论列表失败",
+			}})
+			return
+		}
+
 	}
+	// 存缓存
+	commentService.SetCommentList2Redis(videoId, commentList)
+
 	// 获取评论列表
 	context.JSON(http.StatusOK, CommentListResponse{
 		Response: Response{
