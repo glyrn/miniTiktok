@@ -57,7 +57,7 @@ func Feed(c *gin.Context) {
 		lastTime = time.Now()
 	}
 
-	videoService := GetFinalVideoService()
+	videoService := service.NewVideoServiceImpl()
 	feed, nextTime, err := videoService.Feed(lastTime)
 
 	if err != nil {
@@ -96,7 +96,7 @@ func Publish(context *gin.Context) {
 	title := context.PostForm("title")
 	fmt.Println("title:", title)
 
-	videoService := GetFinalVideoService()
+	videoService := service.NewVideoServiceImpl()
 
 	err = videoService.Publish(data, userId, title)
 	if err != nil {
@@ -122,7 +122,7 @@ func ShowPublishList(context *gin.Context) {
 	if err != nil {
 		fmt.Println("userId 转化失败")
 	}
-	videoService := GetFinalVideoService()
+	videoService := service.NewVideoServiceImpl()
 	publishList, err := videoService.ShowList(userId)
 	if err != nil {
 		fmt.Println("\tpublishList,err := videoService.ShowList(userId)\n 执行失败")
@@ -137,18 +137,4 @@ func ShowPublishList(context *gin.Context) {
 		VideoList: publishList,
 	})
 
-}
-
-// 这里组装所有模块的功能到视频业务中
-/**
-视频需要点赞 评论 用户等模块 故选择用视频模块为核心
-*/
-func GetFinalVideoService() service.VideoServiceImpl {
-
-	var videoService service.VideoServiceImpl
-	var userService service.UserServiceImpl
-
-	videoService.UserService = &userService
-
-	return videoService
 }

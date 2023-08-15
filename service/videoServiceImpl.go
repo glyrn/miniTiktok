@@ -23,6 +23,14 @@ func NewVideoService(userService UserService) *VideoServiceImpl {
 		UserService: userService,
 	}
 }
+func NewVideoServiceImpl() VideoServiceImpl {
+	var videoService VideoServiceImpl
+	var userService UserServiceImpl
+
+	videoService.UserService = &userService
+
+	return videoService
+}
 
 // 传入当前时间戳， 当前用户id，返回组装好的视频序列，以及视频最早发布的时间
 func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, time.Time, error) {
@@ -40,7 +48,7 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, tim
 	fmt.Println(1)
 	//
 	// 组装视频数据 这里把dao层的视频数据 与其他数据进行整合 拼装成新的视频数据
-	err = videoService.buildVideo_services(&videos_service, &Videos_dao)
+	err = videoService.buildVideoTogeter(&videos_service, &Videos_dao)
 	//
 	fmt.Println(2)
 	//
@@ -56,10 +64,10 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, tim
 }
 
 // 对返回的 结果集 进行装箱
-func (videoService *VideoServiceImpl) buildVideo_services(videos_service *[]pojo.Video, data *[]entity.Video) error {
+func (videoService *VideoServiceImpl) buildVideoTogeter(videos_service *[]pojo.Video, data *[]entity.Video) error {
 	for _, temp := range *data {
 		var video_service pojo.Video
-		videoService.creatVideo_service(&video_service, &temp)
+		videoService.buildVideo(&video_service, &temp)
 		//
 		fmt.Println(video_service)
 		//
@@ -69,7 +77,7 @@ func (videoService *VideoServiceImpl) buildVideo_services(videos_service *[]pojo
 }
 
 // 对单个video数据单元进行组装，添加想要的信息，拼装数据库中的数据
-func (videoService *VideoServiceImpl) creatVideo_service(video *pojo.Video, video_dao *entity.Video) {
+func (videoService *VideoServiceImpl) buildVideo(video *pojo.Video, video_dao *entity.Video) {
 
 	video.Video = *video_dao
 
@@ -82,10 +90,10 @@ func (videoService *VideoServiceImpl) creatVideo_service(video *pojo.Video, vide
 	video.Author, err = videoService.GetUser_serviceById(video_dao.AuthorId)
 
 	if err != nil {
-		fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行失败 ")
+		fmt.Println("buildVideo 中的 GetUser_serviceById 执行失败 ")
 	}
 
-	fmt.Println("creatVideo_service 中的 GetUser_serviceById 执行成功")
+	fmt.Println("buildVideo 中的 GetUser_serviceById 执行成功")
 
 	video.CommentCount, _ = dao.GetCommentCountByVideoId(video_dao.Id)
 
@@ -152,7 +160,7 @@ func (videoService VideoServiceImpl) ShowList(authId int64) ([]pojo.Video, error
 	// 开始组装视频信息
 
 	videos_service := make([]pojo.Video, 0, len(video_dao))
-	err = videoService.buildVideo_services(&videos_service, &video_dao)
+	err = videoService.buildVideoTogeter(&videos_service, &video_dao)
 
 	if err != nil {
 		fmt.Println("合成视频信息失败")
