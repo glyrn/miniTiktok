@@ -6,6 +6,7 @@ import (
 	"miniTiktok/dao"
 	"miniTiktok/midddleWare/ffmpeg"
 	"miniTiktok/midddleWare/ftp"
+	"miniTiktok/midddleWare/redis"
 )
 
 func main() {
@@ -27,5 +28,6 @@ func initDevelops() {
 	dao.InitDataBase()
 	ftp.InitFTP()
 	ffmpeg.InitSSH()
+	redis.InitRedis()
 
 }

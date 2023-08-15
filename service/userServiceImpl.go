@@ -74,7 +74,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.
 	avatarAPI := "https://api.multiavatar.com/" + strconv.FormatInt(userId, 10) + ".png"
 
 	// 随机背景图地址
-	backGroundAPI := "https://picsum.photos/seed/" + strconv.FormatInt(userId, 10) + "/500"
+	backGroundAPI := "https://picsum.photos/seed/" + strconv.FormatInt(userId, 10) + "/200"
 
 	// 个人简介
 	signatureRandom := conf.Signature[userId%20]

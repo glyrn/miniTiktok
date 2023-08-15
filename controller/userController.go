@@ -20,7 +20,7 @@ type LoginResponse struct {
 // 用户的所有信息返回
 type UserInfoResponse struct {
 	Response
-	User pojo.User
+	User pojo.User `json:"user"`
 }
 
 func Register(context *gin.Context) {
@@ -107,7 +107,7 @@ func Login(context *gin.Context) {
 
 // 用户信息接口  用户登录成功之后会马上请求这个接口
 func UserInfo(contest *gin.Context) {
-	userId := contest.Query("user_id")
+	userId := contest.GetString("userId")
 	id, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
 		fmt.Println("获取id失败")

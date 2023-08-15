@@ -15,7 +15,7 @@ const PortSSH = 22
 const SSHLiveTime = 10 * 60
 
 // VideoCount 每次获取视频流的数量
-const VideoCount = 5
+const VideoCount = 3
 
 // UrlPre 存储的图片和视频的链接的前缀信息
 const PlayUrlPre = "http://39.101.72.240:9002/videos/"

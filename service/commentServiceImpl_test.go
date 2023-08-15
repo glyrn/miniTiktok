@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"miniTiktok/dao"
 	"miniTiktok/entity"
+	"miniTiktok/midddleWare/redis"
+	"miniTiktok/pojo"
 	"testing"
 	"time"
 )
@@ -29,4 +31,27 @@ func TestAddComment(t *testing.T) {
 		Cancel:      0,
 	})
 	fmt.Println(comment_service)
+}
+
+func TestSetCommentList2Redis(t *testing.T) {
+
+	redis.InitRedis()
+	cmi := CommentServiceImpl{}
+
+	cms := []pojo.Comment{
+		pojo.Comment{
+			Id:           789,
+			User_service: pojo.User{},
+			Content:      "12",
+			CreateData:   "",
+		},
+	}
+	fmt.Println(cmi.SetCommentList2Redis(99, cms))
+}
+
+func TestGetCommentListFromRedis(t *testing.T) {
+	redis.InitRedis()
+	cmi := CommentServiceImpl{}
+	a, _ := cmi.GetCommentListFromRedis(99)
+	fmt.Println(a)
 }
