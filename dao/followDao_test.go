@@ -46,7 +46,7 @@ func TestGetID(t *testing.T) {
 // 获取粉丝列表和关注列表 ID
 func TestGetFanIdDndFollowList(t *testing.T) {
 	InitDataBase()
-	attentionList, follow := GetFanIdDndFollowList(3)
+	attentionList, follow := GetFanIdAndFollowList(3)
 	fmt.Println("粉丝列表id", attentionList)
 	fmt.Println("关注列表id", follow)
 }

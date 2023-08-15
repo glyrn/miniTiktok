@@ -13,7 +13,6 @@ func main() {
 
 	//gin
 	r := gin.Default()
-
 	initRouter(r)
 
 	// 在端口8080上启动HTTP服务器并监听

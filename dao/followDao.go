@@ -66,7 +66,7 @@ func GetID(userId, followId int64) (id int64) {
 }
 
 // 获取粉丝列表和关注列表 ID
-func GetFanIdDndFollowList(userId int64) ([]int64, []int64) {
+func GetFanIdAndFollowList(userId int64) ([]int64, []int64) {
 	fanIdList := []int64{}
 	followIdList := []int64{}
 
@@ -76,9 +76,9 @@ func GetFanIdDndFollowList(userId int64) ([]int64, []int64) {
 
 	//获取关注列表
 	//err2 := DB.Model(follow).Where("user_id", userId).Where("cancel", 0).Pluck("follower_id", &followIdList).Error
-	err2 := DB.Model(follow).Where("user_id = ? AND cancel", userId, 0).Pluck("follower_id", &followIdList).Error
+	err2 := DB.Model(follow).Where("user_id = ? AND cancel = ?", userId, 0).Pluck("follower_id", &followIdList).Error
 
 	util.Error("获取粉丝列表Id出错啦：", err1)
-	util.Error("获取粉丝列表Id出错啦：", err2)
+	util.Error("获取关注列表Id出错啦：", err2)
 	return fanIdList, followIdList
 }
