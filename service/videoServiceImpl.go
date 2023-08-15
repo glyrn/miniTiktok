@@ -162,3 +162,7 @@ func (videoService VideoServiceImpl) ShowList(authId int64) ([]pojo.Video, error
 	return videos_service, err
 
 }
+
+func (videoService VideoServiceImpl) GetWorkCountByAuthorId(id int64) (int64, error) {
+	return dao.GetWorkCountByAuthorId(id)
+}

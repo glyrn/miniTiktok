@@ -25,4 +25,6 @@ type VideoService interface {
 
 	// 根据用户id 查询这个用户发布的视频列表
 	ShowList(authId int64) ([]pojo.Video, error)
+
+	GetWorkCountByAuthorId(id int64) (int64, error)
 }

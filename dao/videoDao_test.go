@@ -103,3 +103,9 @@ func TestSaveVideoInfo(t *testing.T) {
 		fmt.Println("视频信息新增错误")
 	}
 }
+
+func TestGetWorkCountByAuthorId(t *testing.T) {
+	InitDataBase()
+	count, _ := GetWorkCountByAuthorId(1)
+	fmt.Println(count)
+}

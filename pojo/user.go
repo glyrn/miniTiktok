@@ -11,7 +11,11 @@ type User struct {
 
 	BackgroundImage string `json:"background_image,omitempty"`
 
+	// 个性签名
 	Signature string `json:"signature,omitempty"`
+
+	//作品数
+	WorkCount int64 `json:"work_count,omitempty"`
 
 	// 关注字段
 	FollowCount   int64 `json:"follow_count"`   // 关注人数

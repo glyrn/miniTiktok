@@ -18,6 +18,7 @@ type UserServiceImpl struct {
 }
 
 var fsi = FollowServiceImpl{}
+var vsi = VideoServiceImpl{}
 
 func (UserServiceImpl *UserServiceImpl) GetUserByName(name string) (entity.User, error) {
 	user_dao, err := dao.GetUserByName(name)
@@ -52,6 +53,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.
 		Avatar:          "",
 		BackgroundImage: "",
 		Signature:       "",
+		WorkCount:       0,
 	}
 	user_dao, err := dao.GetUserById(userId)
 	if err != nil {
@@ -77,6 +79,9 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.
 	// 个人简介
 	signatureRandom := conf.Signature[userId%20]
 
+	// 作品数
+	workCount, _ := vsi.GetWorkCountByAuthorId(userId)
+
 	// 用户信息获取成功
 	// 组装信息
 	user = pojo.User{
@@ -88,6 +93,7 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.
 		Avatar:          avatarAPI,
 		BackgroundImage: backGroundAPI,
 		Signature:       signatureRandom,
+		WorkCount:       workCount,
 	}
 	fmt.Println(user)
 

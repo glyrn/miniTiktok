@@ -154,3 +154,15 @@ func GetVideosByCurTime(curTime time.Time) ([]entity.Video, error) {
 
 	return videos, nil
 }
+
+// 查询一个作者的作品数
+func GetWorkCountByAuthorId(id int64) (int64, error) {
+	var count int64
+
+	result := DB.Model(&entity.Video{}).Where("author_id = ?", id).Count(&count)
+
+	if result.Error != nil {
+		fmt.Println("查询作品数错误")
+	}
+	return count, nil
+}
