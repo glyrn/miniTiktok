@@ -44,12 +44,14 @@ func (UserServiceImpl *UserServiceImpl) Insert2User(user *entity.User) bool {
 // 未登录状态 获取 根据userID 获取到user组装后得到对象
 func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.User, error) {
 	user := pojo.User{
-		Id:            0,
-		Name:          "",
-		FollowCount:   0,
-		FollowerCount: 0,
-		IsFollow:      false,
-		Avatar:        "",
+		Id:              0,
+		Name:            "",
+		FollowCount:     0,
+		FollowerCount:   0,
+		IsFollow:        false,
+		Avatar:          "",
+		BackgroundImage: "",
+		Signature:       "",
 	}
 	user_dao, err := dao.GetUserById(userId)
 	if err != nil {
@@ -69,15 +71,23 @@ func (UserServiceImpl *UserServiceImpl) GetUser_serviceById(userId int64) (pojo.
 	// 随机头像地址
 	avatarAPI := "https://api.multiavatar.com/" + strconv.FormatInt(userId, 10) + ".png"
 
+	// 随机背景图地址
+	backGroundAPI := "https://picsum.photos/seed/" + strconv.FormatInt(userId, 10) + "/500"
+
+	// 个人简介
+	signatureRandom := conf.Signature[userId%20]
+
 	// 用户信息获取成功
 	// 组装信息
 	user = pojo.User{
-		Id:            userId,
-		Name:          user_dao.Name,
-		FollowCount:   followcount,
-		FollowerCount: followercount,
-		IsFollow:      false,
-		Avatar:        avatarAPI,
+		Id:              userId,
+		Name:            user_dao.Name,
+		FollowCount:     followcount,
+		FollowerCount:   followercount,
+		IsFollow:        false,
+		Avatar:          avatarAPI,
+		BackgroundImage: backGroundAPI,
+		Signature:       signatureRandom,
 	}
 	fmt.Println(user)
 
