@@ -10,7 +10,6 @@ const LiveTime = 120
 const HostSSH = "39.101.72.240"
 const UserSSH = "7m5GUXUK09tu5jQz.knr4RfKIQA+oo0tR92/xfnIP6JU="
 const PasswordSSH = "tFJ7I5SD5fQQV1Ao.Q/VwOeIhPxg78Dc9hNtd/mPHz1QrYuKlFuczQvHuRw=="
-const TypeSSH = "password"
 const PortSSH = 22
 const SSHLiveTime = 10 * 60
 

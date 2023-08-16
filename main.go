@@ -10,9 +10,19 @@ import (
 )
 
 func main() {
-	initDevelops()
 
-	//gin
+	// 这里是与提供服务的服务器建立连接
+
+	// 连接mysql
+	dao.InitDataBase()
+	// 连接vsftpd
+	ftp.InitFTP()
+	// 连接服务器ssh
+	ffmpeg.InitSSH()
+	// 连接redis
+	redis.InitRedis()
+
+	//gin 创建默认路由
 	r := gin.Default()
 	initRouter(r)
 
@@ -21,13 +31,4 @@ func main() {
 	if err != nil {
 		fmt.Println("启动HTTP服务器失败:", err)
 	}
-}
-
-// 这里是与提供服务的服务器建立连接
-func initDevelops() {
-	dao.InitDataBase()
-	ftp.InitFTP()
-	ffmpeg.InitSSH()
-	redis.InitRedis()
-
 }

@@ -35,10 +35,10 @@ func InitSSH() {
 
 	}
 
-	// 这里用密码方式连接
-	if conf.TypeSSH == "password" {
-		SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(decrypt(conf.PasswordSSH, key))}
-	}
+	// 连接
+
+	SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(decrypt(conf.PasswordSSH, key))}
+
 	// 登录，创建会话
 	addr := fmt.Sprintf("%s:%d", conf.HostSSH, conf.PortSSH)
 	ClientSSH, err = ssh.Dial("tcp", addr, SSHconfig)

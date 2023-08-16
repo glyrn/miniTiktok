@@ -52,6 +52,6 @@ func TestSetCommentList2Redis(t *testing.T) {
 func TestGetCommentListFromRedis(t *testing.T) {
 	redis.InitRedis()
 	cmi := CommentServiceImpl{}
-	a, _ := cmi.GetCommentListFromRedis(99)
+	a, _ := cmi.GetCommentListFromRedis(12)
 	fmt.Println(a)
 }
