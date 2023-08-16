@@ -117,16 +117,13 @@ func MessageList(context *gin.Context) {
 	fmt.Println("上次最新消息的时间：", preMsgTime)
 
 	// 获取消息列表
-
 	messageService := new(service.MessageServiceImpl)
 
 	// 先查缓存
-
 	messageList, err := messageService.GetChatListFromRedis(toUserId, fromUserId, preMsgTime)
 
 	if err != nil {
 		// 未命中 从数据库查
-
 		messageList, err = messageService.GetChatList(toUserId, fromUserId, preMsgTime)
 		if err != nil {
 			context.JSON(http.StatusOK, MessageResponse{Response: Response{
@@ -134,36 +131,25 @@ func MessageList(context *gin.Context) {
 				StatusMsg:  "消息列表获取失败",
 			}})
 			fmt.Println("消息列表获取失败")
-
 			return
 		}
-		// 成功
-		fmt.Println("消息列表：", messageList)
-
-		context.JSON(http.StatusOK, MessageResponse{Response: Response{
-			StatusCode: 0,
-			StatusMsg:  "获取成功",
-		},
-			MessageList: messageList,
-		})
-		fmt.Println("获取成功")
 
 		// 存缓存 ->  存空键 防止聊天消息重复堆积
-		messageList = nil
-		messageService.SetChatListToRedis(toUserId, fromUserId, preMsgTime, messageList)
-		return
-	} else {
-		// 成功
-		fmt.Println("消息列表：", messageList)
-
-		context.JSON(http.StatusOK, MessageResponse{Response: Response{
-			StatusCode: 0,
-			StatusMsg:  "获取成功",
-		},
-			MessageList: messageList,
-		})
-		fmt.Println("获取成功")
-
-		return
+		err := messageService.SetChatListToRedis(toUserId, fromUserId, preMsgTime, messageList)
+		if err != nil {
+			return
+		}
 	}
+	// 成功
+	fmt.Println("消息列表：", messageList)
+	context.JSON(http.StatusOK, MessageResponse{Response: Response{
+		StatusCode: 0,
+		StatusMsg:  "获取成功",
+	},
+		MessageList: messageList,
+	})
+	fmt.Println("获取成功")
+
+	return
+
 }

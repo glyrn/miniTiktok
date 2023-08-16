@@ -12,7 +12,7 @@ import (
 	"time"
 )
 
-// 定义视频服务实现类
+// VideoServiceImpl 定义视频服务实现类
 type VideoServiceImpl struct {
 	// 看视频的时候需要作者信息 所以需要用户信息服务
 	UserService
@@ -32,7 +32,7 @@ func NewVideoServiceImpl() VideoServiceImpl {
 	return videoService
 }
 
-// 传入当前时间戳， 当前用户id，返回组装好的视频序列，以及视频最早发布的时间
+// Feed 传入当前时间戳， 当前用户id，返回组装好的视频序列，以及视频最早发布的时间
 func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, time.Time, error) {
 	// 创建返回的视频数组切片
 	// 这里通过VideoCount来限制预加载数量 ，同时预制切片容量 提高性能
@@ -147,7 +147,7 @@ func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId
 	return nil
 }
 
-// 查看发布的视频列表
+// ShowList 查看发布的视频列表
 func (videoService VideoServiceImpl) ShowList(authId int64) ([]pojo.Video, error) {
 
 	video_dao, err := dao.GetVideoByAuthorId(authId)
