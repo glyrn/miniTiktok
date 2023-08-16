@@ -7,11 +7,11 @@ import (
 )
 
 // 获取聊天记录
-func GetChatListByToUserIdAndFromUserId(toUserId int64, fromUserId int64, preMsgTime time.Time) ([]entity.Message, error) {
+func GetChatListByToUserIdAndFromUserId(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
 	var chatList []entity.Message
 	// 从数据库中查数据
 	// 这里必须显式调用 否则找不到表格 会报错
-	result := DB.Model(entity.Message{}).Where("to_user_id = ? or from_user_id = ? and create_time > ?", toUserId, fromUserId, preMsgTime).Find(&chatList)
+	result := DB.Model(entity.Message{}).Where("to_user_id = ? or from_user_id = ?", toUserId, fromUserId).Find(&chatList)
 	if result.Error != nil {
 		fmt.Println("获取聊天记录失败", result.Error)
 		return nil, result.Error

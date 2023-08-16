@@ -2,7 +2,6 @@ package service
 
 import (
 	"miniTiktok/entity"
-	"time"
 )
 
 type MessageService interface {
@@ -11,5 +10,5 @@ type MessageService interface {
 	InsetChat(messageDao entity.Message) error
 
 	// GetChatList 获取消息列表
-	GetChatList(toUserId int64, fromUserId int64, preMsgTime time.Time) ([]entity.Message, error)
+	GetChatList(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error)
 }

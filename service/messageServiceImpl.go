@@ -4,15 +4,14 @@ import (
 	"fmt"
 	"miniTiktok/dao"
 	"miniTiktok/entity"
-	"time"
 )
 
 type MessageServiceImpl struct {
 	MessageService
 }
 
-func (messageServiceImpl MessageServiceImpl) InsetChat(message entity.Message) error {
-	err := dao.ActionMessage(message.ToUserId, message.FromUserId, message.Content)
+func (messageServiceImpl MessageServiceImpl) InsetChat(toUserId int64, fromUserId int64, content string) error {
+	err := dao.ActionMessage(toUserId, fromUserId, content)
 	if err != nil {
 		fmt.Println("添加消息错误")
 		return err
@@ -20,7 +19,7 @@ func (messageServiceImpl MessageServiceImpl) InsetChat(message entity.Message) e
 	return nil
 }
 
-func (messageServiceImpl MessageServiceImpl) GetChatList(toUserId int64, fromUserId int64, preMsgTime time.Time) ([]entity.Message, error) {
+func (messageServiceImpl MessageServiceImpl) GetChatList(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
 	// TODO 消息列表
 	messageList, err := dao.GetChatListByToUserIdAndFromUserId(toUserId, fromUserId, preMsgTime)
 	fmt.Println(messageList)

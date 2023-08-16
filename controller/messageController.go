@@ -7,7 +7,6 @@ import (
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type MessageResponse struct {
@@ -26,6 +25,7 @@ func MessageAction(context *gin.Context) {
 			StatusMsg:  "userID获取失败",
 		}})
 		fmt.Println("userID获取失败")
+		return
 	}
 	fromUserId, err := strconv.ParseInt(id.(string), 10, 64)
 	fmt.Println("发送者用户id", fromUserId)
@@ -38,6 +38,7 @@ func MessageAction(context *gin.Context) {
 			StatusMsg:  "对方用户id获取失败",
 		}})
 		fmt.Println("对方用户id获取失败")
+		return
 	}
 	fmt.Println("对方用户id", toUserId)
 
@@ -49,12 +50,29 @@ func MessageAction(context *gin.Context) {
 			StatusMsg:  "消息内容获取失败",
 		}})
 		fmt.Println("消息内容获取失败")
+		return
 	}
 	fmt.Println("消息内容：", content)
 
 	//--------------------------------------------------------------------------
 	//分割线，上面的内容是对id获取的检验，下面才是内容的开始
+	//添加消息
+	messageService := new(service.MessageServiceImpl)
+	err = messageService.InsetChat(toUserId, fromUserId, content)
+	if err != nil {
+		context.JSON(http.StatusOK, MessageResponse{Response: Response{
+			StatusCode: -1,
+			StatusMsg:  "发送消息失败",
+		}})
+		fmt.Println("发送消息失败")
+		return
+	}
 
+	context.JSON(http.StatusOK, MessageResponse{Response: Response{
+		StatusCode: 0,
+		StatusMsg:  "发送成功",
+	}})
+	fmt.Println("发送成功")
 }
 
 func MessageList(context *gin.Context) {
@@ -68,6 +86,7 @@ func MessageList(context *gin.Context) {
 			StatusMsg:  "userID获取失败",
 		}})
 		fmt.Println("userID获取失败")
+		return
 	}
 	fromUserId, err := strconv.ParseInt(id.(string), 10, 64)
 	fmt.Println("发送者用户id", fromUserId)
@@ -80,11 +99,12 @@ func MessageList(context *gin.Context) {
 			StatusMsg:  "userID获取失败",
 		}})
 		fmt.Println("userID获取失败")
+		return
 	}
 	fmt.Println("最终的id", toUserId)
 
 	// 获取上次最新消息的时间
-	preMsgTime, err := time.Parse(context.Query("pre_msg_time"), "2020-01-01 00:00:00")
+	preMsgTime, err := strconv.ParseInt(context.Query("pre_msg_time"), 10, 64)
 	if err != nil {
 		context.JSON(http.StatusOK, MessageResponse{Response: Response{
 			StatusCode: -1,
@@ -103,6 +123,7 @@ func MessageList(context *gin.Context) {
 			StatusMsg:  "消息列表获取失败",
 		}})
 		fmt.Println("消息列表获取失败")
+		return
 	}
 	fmt.Println("消息列表：", messageList)
 
