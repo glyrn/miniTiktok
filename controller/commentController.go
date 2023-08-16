@@ -179,7 +179,6 @@ func CommentList(context *gin.Context) {
 	}
 	// 存缓存
 	commentService.SetCommentList2Redis(videoId, commentList)
-
 	// 获取评论列表
 	context.JSON(http.StatusOK, CommentListResponse{
 		Response: Response{
@@ -188,4 +187,5 @@ func CommentList(context *gin.Context) {
 		CommentList: commentList,
 	})
 	return
+
 }
