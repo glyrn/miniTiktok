@@ -43,4 +43,10 @@ func initRouter(r *gin.Engine) {
 	apiRouter.POST("/favorite/action/", jwt.Authentication4Query(), controller.LikesAction)
 	//用户的点赞列表
 	apiRouter.GET("/favorite/list/", controller.LikesList)
+
+	//发送消息
+	apiRouter.POST("/message/action/", jwt.Authentication4Query(), controller.MessageAction)
+	//获取聊天记录
+	apiRouter.GET("/message/chat/", controller.MessageList)
+
 }

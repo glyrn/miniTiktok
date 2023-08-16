@@ -10,14 +10,14 @@ import (
 	"strconv"
 )
 
-// 用于用户登录注册的返回
+// LoginResponse 用于用户登录注册的返回
 type LoginResponse struct {
 	Response
 	UserId int64  `json:"user_id,omitempty"`
 	Token  string `json:"token"`
 }
 
-// 用户的所有信息返回
+// UserInfoResponse 用户的所有信息返回
 type UserInfoResponse struct {
 	Response
 	User pojo.User `json:"user"`
@@ -32,9 +32,9 @@ func Register(context *gin.Context) {
 	fmt.Println("注册信息请求中得到了" + passWord)
 
 	// 获取业务层实例
-	UserService_Impl := service.UserServiceImpl{}
+	UserServiceImpl := service.UserServiceImpl{}
 
-	user, err := UserService_Impl.GetUserByName(userName)
+	user, err := UserServiceImpl.GetUserByName(userName)
 	if user.Name == userName && err == nil {
 		fmt.Println("用户已存在")
 		// 用户存在
@@ -52,14 +52,14 @@ func Register(context *gin.Context) {
 			Password: passWord,
 		}
 		// 插入数据 新增用户信息
-		flag := UserService_Impl.Insert2User(&User)
+		flag := UserServiceImpl.Insert2User(&User)
 		if flag == false {
 			fmt.Println("新增用户信息失败")
 		}
 		// 用户信息插入成功
 		fmt.Println(userName + " 注册成功")
 		// 从表中得到新增的user对象 防止注册失败 而使用未入库的对象, 从而得到user的id
-		userInTable, err := UserService_Impl.GetUserByName(userName)
+		userInTable, err := UserServiceImpl.GetUserByName(userName)
 		if err != nil {
 			fmt.Println("从表中获取对象错误")
 		}
