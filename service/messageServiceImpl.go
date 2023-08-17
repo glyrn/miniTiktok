@@ -80,7 +80,7 @@ func (messageServiceImpl MessageServiceImpl) DeleteChatListToRedis(toUserId int6
 	err := redis.Rdb.Del(redis.Ctx, fmt.Sprintf("messageList:"+
 		strconv.FormatInt(toUserId, 10)+
 		strconv.FormatInt(fromUserId, 10)+
-		"*")).Err()
+		"0")).Err()
 
 	if errors.Is(err, redis.ErrKeyNotExist) {
 		fmt.Println("缓存中不存在")
