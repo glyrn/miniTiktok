@@ -4,45 +4,46 @@ import (
 	"errors"
 	"fmt"
 	"miniTiktok/dao"
+	"time"
 )
 
 type LikeServiceImpl struct {
 	UserService
 }
 
-// 实现点赞
-func (likeServiceImpl LikeServiceImpl) AddLikes(likes_dao dao.Likes_dao) (Likes_service, error) {
-
-	// 先取出基础数据
-	var likeIndao dao.Likes_dao
-	likeIndao.VideoId = likes_dao.VideoId
-	likeIndao.UserId = likes_dao.UserId
-	likeIndao.Cancel = likes_dao.Cancel
-	likeIndao.CreateDate = likes_dao.CreateDate
-
-	// 存表
-	// 调用dao层方法实现点赞
-	//先判断是否cancel是1，是1的话就恢复到0，相当于是点赞
+// AddLikes 实现点赞
+func (likeServiceImpl LikeServiceImpl) AddLikes(userId int64, videoId int64) (Likes_service, error) {
 	var likeRtn dao.Likes_dao
 	var flag bool
-	if likeIndao.Cancel == 1 {
-		likeRtn, flag = dao.UpdateLikesByUserId(likeIndao.UserId, likeIndao.VideoId)
-		fmt.Println("恢复点赞")
-		//likeRtn := likeIndao
-		likeRtn = likeIndao
-	} else {
+
+	_, err := dao.GetLikesByUserIdAndVideoId(userId, videoId)
+	//先判断是否存在
+	if err != nil {
+		// 先取出基础数据
+		var likeIndao dao.Likes_dao
+		likeIndao.VideoId = videoId
+		likeIndao.UserId = userId
+		likeIndao.Cancel = 0
+		likeIndao.CreateDate = time.Now()
+
 		likeRtn, flag = dao.Insert2Likes_dao(likeIndao)
-		if flag == false {
-			fmt.Println("点赞失败")
-		}
+	} else {
+		fmt.Println("恢复点赞")
+		likeRtn, flag = dao.UpdateLikesByUserId(userId, videoId)
 	}
-	// 存表成功
+
+	if !flag {
+		fmt.Println("点赞失败")
+		return Likes_service{}, err
+	}
+
 	// 调出点赞的用户的信息
 	Userimpl := UserServiceImpl{}
-	User_serverFromSearch, err := Userimpl.GetUser_serviceById(likes_dao.UserId)
+	User_serverFromSearch, err := Userimpl.GetUser_serviceById(userId)
 	if err != nil {
 		fmt.Println("用户信息查询错误")
 	}
+
 	// 组装信息
 	likesRtn := Likes_service{
 		Id:           likeRtn.Id,
@@ -54,10 +55,10 @@ func (likeServiceImpl LikeServiceImpl) AddLikes(likes_dao dao.Likes_dao) (Likes_
 
 }
 
-// 通过用户的id加视频id来取消点赞
+// DelLikes 通过用户的id加视频id来取消点赞
 func (LikesServiceImpl LikeServiceImpl) DelLikes(userId int64, videoId int64) error {
 	flag := dao.DeleteLikesByUserId(userId, videoId)
-	if flag == true {
+	if flag {
 		fmt.Println(userId, "已经成功取消了点赞了")
 		return nil
 	} else {
@@ -66,7 +67,7 @@ func (LikesServiceImpl LikeServiceImpl) DelLikes(userId int64, videoId int64) er
 	}
 }
 
-// 查看点赞的列表
+// GetLikeList 查看点赞的列表
 func (likesServiceImpl LikeServiceImpl) GetLikeList(videoId int64) ([]Likes_service, error) {
 	// 查询数据表中评论列表信息
 	likes_dao_list, err := dao.GetLikesListByVideoId(videoId)

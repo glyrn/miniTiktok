@@ -1,7 +1,6 @@
 package service
 
 import (
-	"miniTiktok/dao"
 	"miniTiktok/pojo"
 )
 
@@ -14,10 +13,10 @@ type Likes_service struct {
 type LikeService interface {
 
 	// 点赞
-	AddLikes(likes_dao dao.Likes_dao) (Likes_service, error)
+	AddLikes(userId int64, videoId int64) (Likes_service, error)
 
 	// 通过用户的ID来点赞
-	DelLikes(userId int64) error
+	DelLikes(userId int64, videoId int64) error
 
 	// 通过视频的的ID查看点赞的列表
 	GetLikesList(videoId int64) ([]Likes_service, error)

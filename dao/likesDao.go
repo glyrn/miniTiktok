@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"errors"
 	"fmt"
 	"time"
 )
@@ -46,7 +47,20 @@ func GetLikesCountByVideoId(videoId int64) (int64, error) {
 	return likesCount, nil
 }
 
-// 根据视频id 获取点赞列表
+// GetLikesByUserIdAndVideoId 根据用户id和视频id 获取该视频的点赞信息
+func GetLikesByUserIdAndVideoId(UserId int64, VideoId int64) (Likes_dao, error) {
+	var likes_dao Likes_dao
+	// 先查询是否存在
+	result := DB.Where("user_id = ? AND video_id = ?", UserId, VideoId).First(&likes_dao)
+	if result.RowsAffected == 0 {
+		fmt.Println("当前没有点赞")
+		return Likes_dao{}, errors.New("当前没有点赞")
+	}
+	fmt.Println("点赞：", likes_dao)
+	return likes_dao, nil
+}
+
+// GetLikesListByVideoId 根据视频id 获取点赞列表
 func GetLikesListByVideoId(videoId int64) ([]Likes_dao, error) {
 	var likesList []Likes_dao
 
@@ -97,14 +111,14 @@ func DeleteLikesByUserId(UserId int64, VideoId int64) bool {
 func UpdateLikesByUserId(UserId int64, VideoId int64) (Likes_dao, bool) {
 	var likes_dao Likes_dao
 	// 先查询id是否存在
-	result := DB.Where("user_id = ? AND video_id=? AND cancel = ?", UserId, VideoId, 1).First(&likes_dao)
+	result := DB.Where("user_id = ? AND video_id=?", UserId, VideoId).First(&likes_dao)
 	if result.RowsAffected == 0 {
 		fmt.Println("当前没有点赞")
 		return likes_dao, false
 	}
 	// 开始恢复
 	// 把cancel 设置成0
-	err := DB.Model(Likes_dao{}).Where("user_id = ? AND video_id = ?", UserId, VideoId).Update("cancel", 0).Error
+	err := DB.Model(Likes_dao{}).Where("id = ?", likes_dao.Id).Update("cancel", 0).Error
 	if err != nil {
 		fmt.Println("点赞恢复失败")
 		return likes_dao, false

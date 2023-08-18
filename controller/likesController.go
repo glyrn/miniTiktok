@@ -8,7 +8,6 @@ import (
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
-	"time"
 )
 
 type LikesActionResponse struct {
@@ -34,8 +33,9 @@ func LikesAction(context *gin.Context) {
 			StatusMsg:  "userID获取失败",
 		}})
 		fmt.Println("userID获取失败")
-
+		return
 	}
+
 	user_id := id.(string)
 	userId, err := strconv.ParseInt(user_id, 10, 64)
 	if err != nil {
@@ -55,6 +55,7 @@ func LikesAction(context *gin.Context) {
 			StatusMsg:  "videoID获取失败",
 		}})
 		fmt.Println("videoID获取失败")
+		return
 	}
 
 	//--------------------------------------------------------------------------
@@ -76,15 +77,8 @@ func LikesAction(context *gin.Context) {
 	likeService := new(service.LikeServiceImpl)
 
 	if actionType == 1 {
-
-		var like_dao dao.Likes_dao
-		like_dao.UserId = userId
-		like_dao.VideoId = videoId
-		like_dao.CreateDate = time.Now()
-		like_dao.Cancel = 0
-
 		// 增加点赞
-		like_sevice, err := likeService.AddLikes(like_dao)
+		like_sevice, err := likeService.AddLikes(userId, videoId)
 		// 发表失败
 		if err != nil {
 			context.JSON(http.StatusOK, LikesActionResponse{Response: Response{
@@ -97,30 +91,13 @@ func LikesAction(context *gin.Context) {
 		context.JSON(http.StatusOK, LikesActionResponse{
 			Response: Response{
 				StatusCode: 0,
-				StatusMsg:  "",
+				StatusMsg:  "点赞成功",
 			},
 			Likes: like_sevice,
 		})
 		fmt.Println("点赞成功")
 		return
-	}
-
-	// 取消点赞 把cancel赋值 1
-	if actionType == 2 {
-		// 获取待取消点赞的 id
-		//这里的返回值不对，导致了出现了一定的问题
-
-		video_id := context.Query("video_id")
-		videoId, err := strconv.ParseInt(video_id, 10, 64)
-		if err != nil {
-			// 转化失败
-			context.JSON(http.StatusOK, LikesActionResponse{Response: Response{
-				StatusCode: -1,
-				StatusMsg:  "favoriteId 出现异常",
-			}})
-			return
-		}
-
+	} else if actionType == 2 { // 取消点赞 把cancel赋值 1
 		// 开始取消点赞
 		fmt.Println("取消点赞中", videoId)
 		err = likeService.DelLikes(userId, videoId)
