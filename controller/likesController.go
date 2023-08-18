@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"miniTiktok/dao"
+	"miniTiktok/entity"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -17,7 +18,7 @@ type LikesActionResponse struct {
 
 type LikesListResponse struct {
 	Response
-	LikesList []service.Likes_service `json:"likes_list,omitempty"`
+	LikesList []entity.Video `json:"video_list,omitempty"`
 }
 
 func LikesAction(context *gin.Context) {
@@ -156,9 +157,21 @@ func LikesList(context *gin.Context) {
 		fmt.Println("userID获取失败")
 	}
 	// 获取点赞列表
-	likeService := new(service.LikeServiceImpl)
+	//likeService := new(service.LikeServiceImpl)
 	//通过用户的id来查点赞列表
-	likesList, err := likeService.GetLikeListByUserId(userId)
+
+	// TODO 着急实现功能 后期优化
+	videoIDList, _ := dao.GetFavoriteIdListByUserId(userId)
+	var videoList = make([]entity.Video, len(videoIDList))
+
+	// 循环遍历IDlist
+	for i, videoID := range videoIDList {
+
+		videoList[i], _ = dao.GetVideoByVideoId(videoID)
+
+	}
+
+	//likesList, err := likeService.GetLikeListByUserId(userId)
 	if err != nil {
 		fmt.Println("获取点赞列表失败")
 		fmt.Println("err")
@@ -173,7 +186,7 @@ func LikesList(context *gin.Context) {
 		Response: Response{
 			StatusCode: 0,
 		},
-		LikesList: likesList,
+		LikesList: videoList,
 	})
 	return
 }

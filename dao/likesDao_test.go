@@ -40,10 +40,16 @@ func TestDeleteLikesByUserId(t *testing.T) {
 // 更新cancel，也就是恢复点赞
 func TestUpdateLikesByUserId(t *testing.T) {
 	InitDataBase()
-	_,bl := UpdateLikesByUserId(2, 2)
+	_, bl := UpdateLikesByUserId(2, 2)
 	if bl {
 		fmt.Print("已恢复点赞")
 	} else {
 		fmt.Println("点赞恢复失败")
 	}
+}
+
+func TestGetFavoriteIdListByUserId(t *testing.T) {
+	InitDataBase()
+	list, _ := GetFavoriteIdListByUserId(12)
+	fmt.Println(list)
 }

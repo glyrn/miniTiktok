@@ -115,6 +115,7 @@ func UpdateLikesByUserId(UserId int64, VideoId int64) (Likes_dao, bool) {
 
 // 后期补的
 // 根据用户的id 获取点赞列表
+// GetLikesListByUserId
 func GetLikesListByUserId(userId int64) ([]Likes_dao, error) {
 	var likesList []Likes_dao
 
@@ -136,4 +137,20 @@ func GetLikesListByUserId(userId int64) ([]Likes_dao, error) {
 	//这里最好还是选择返回user_id而不是全部，但是目前还不知道咋搞
 	fmt.Println(likesList)
 	return likesList, nil
+}
+
+// 根据用户id 查询喜欢的视频的id
+// 8.18 gly补
+func GetFavoriteIdListByUserId(userID int64) ([]int64, error) {
+	var list []int64
+
+	result := DB.Model(Likes_dao{}).Where("user_id = ? AND cancel = ?", userID, 0).Pluck("video_id", &list)
+
+	// 查询出错
+	if result.Error != nil {
+		fmt.Println("查询点赞数出错", result.Error.Error())
+		return nil, result.Error
+	}
+
+	return list, nil
 }
