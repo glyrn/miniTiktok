@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"miniTiktok/dao"
+	"miniTiktok/midddleWare/bloomFilter"
 	"miniTiktok/midddleWare/ffmpeg"
 	"miniTiktok/midddleWare/ftp"
 	"miniTiktok/midddleWare/redis"
@@ -21,6 +22,8 @@ func main() {
 	ffmpeg.InitSSH()
 	// 连接redis
 	redis.InitRedis()
+	// 创建布隆过滤器
+	bloomFilter.InitBloom()
 
 	//gin 创建默认路由
 	r := gin.Default()
