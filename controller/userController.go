@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"miniTiktok/entity"
+	"miniTiktok/midddleWare/jwt"
 	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
@@ -89,6 +90,14 @@ func Login(context *gin.Context) {
 	if passWord == user.Password {
 		// 通过登录验证
 		token := service.CreateTokenByUserName(userName)
+
+		// 存JWT令牌
+		err := jwt.SetJWT2Redis(strconv.FormatInt(user.Id, 10), token)
+
+		if err != nil {
+			fmt.Println("保存 JWT 令牌失败")
+		}
+
 		context.JSON(http.StatusOK, LoginResponse{
 			Response: Response{StatusCode: 0},
 			UserId:   int64(user.Id),

@@ -22,6 +22,7 @@ func main() {
 	ffmpeg.InitSSH()
 	// 连接redis
 	redis.InitRedis()
+	redis.InitRedis15()
 	// 创建布隆过滤器
 	bloomFilter.InitBloom()
 
