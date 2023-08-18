@@ -97,6 +97,7 @@ func SaveVideoInfo(videoName string, imageName string, authorId int64, title str
 	if result := DB.Save(&Video); result.Error != nil {
 		return result.Error
 	}
+	// 更改Redis数据库 作者作品++ 创建视频表
 	return nil
 
 }

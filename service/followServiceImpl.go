@@ -1,6 +1,8 @@
 package service
 
 import (
+	"context"
+	"fmt"
 	"miniTiktok/dao"
 	"miniTiktok/entity"
 	"miniTiktok/pojo"
@@ -44,6 +46,21 @@ func (fsi *FollowServiceImpl) InsertFollow(userId, toUserId, account int64) {
 		UpdateCanCelById(id, follow.Cancel)
 	} else {
 		dao.InsertFollow(follow)
+	}
+
+	fmt.Println("缓存添加")
+	ctx := context.Background()
+	var err error = nil
+	fmt.Println(follow.Cancel)
+	if follow.Cancel == 1 {
+		//
+		err = dao.UnFollow2RedisWithoutUserID(follow.UserId, ctx)
+	} else {
+		//
+		err = dao.Follow2RedisWithoutUserID(follow.UserId, ctx)
+	}
+	if err != nil {
+		fmt.Println("缓存数据添加出错")
 	}
 
 }

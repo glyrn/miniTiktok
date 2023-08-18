@@ -49,9 +49,7 @@ func (likeServiceImpl LikeServiceImpl) AddLikes(likes_dao dao.Likes_dao) (Likes_
 		User_service: User_serverFromSearch,
 		CreateDate:   likeRtn.CreateDate.Format("2006-01-02 15:04:05"),
 	}
-
 	return likesRtn, nil
-
 }
 
 // 通过用户的id加视频id来取消点赞

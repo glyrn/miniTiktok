@@ -76,7 +76,7 @@ func GetLikesListByVideoId(videoId int64) ([]Likes_dao, error) {
 // 其实我还是想用删除的，不过既然有这个cancel的存在，那么不如直接用了
 func DeleteLikesByUserId(UserId int64, VideoId int64) bool {
 	var likes_dao Likes_dao
-	// 先查询id是否存在
+	//先查询id是否存在
 	result := DB.Where("user_id = ? AND video_id = ? AND cancel = ?", UserId, VideoId, 0).First(&likes_dao)
 	if result.RowsAffected == 0 {
 		fmt.Println("当前没有点赞")

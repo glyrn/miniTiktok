@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"miniTiktok/dao"
+	"miniTiktok/midddleWare/redis"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -84,6 +85,10 @@ func LikesAction(context *gin.Context) {
 
 		// 增加点赞
 		like_sevice, err := likeService.AddLikes(like_dao)
+		errRedis := dao.Like2RedisWithoutUserIdUser(userId, redis.Ctx)
+		if err != nil {
+			fmt.Println("用户缓存信息存储错误", errRedis)
+		}
 		// 发表失败
 		if err != nil {
 			context.JSON(http.StatusOK, LikesActionResponse{Response: Response{
@@ -107,8 +112,12 @@ func LikesAction(context *gin.Context) {
 	// 取消点赞 把cancel赋值 1
 	if actionType == 2 {
 		// 获取待取消点赞的 id
-		//这里的返回值不对，导致了出现了一定的问题
-
+		// 这里的返回值不对，导致了出现了一定的问题
+		// 缓存部分：
+		errRedis := dao.UnLike2RedisWithoutUserIdUser(userId, redis.Ctx)
+		if err != nil {
+			fmt.Println("用户缓存信息存储错误", errRedis)
+		}
 		video_id := context.Query("video_id")
 		videoId, err := strconv.ParseInt(video_id, 10, 64)
 		if err != nil {

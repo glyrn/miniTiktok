@@ -3,6 +3,7 @@ package dao
 import (
 	"fmt"
 	"miniTiktok/entity"
+	"miniTiktok/midddleWare/redis"
 )
 
 //type Comment_dao struct {
@@ -21,11 +22,17 @@ import (
 // 发表评论
 func Insert2Comment_dao(comment entity.Comment) (entity.Comment, bool) {
 	err := DB.Create(&comment).Error
+	// Redis
+	errRedis := Comment2RedisWithoutUserID(comment.VideoId, redis.Ctx)
+	if errRedis != nil {
+		fmt.Println("缓存评论计数添加失败")
+	}
 	if err != nil {
-		fmt.Println("评论增加失败")
+		fmt.Println("数据库评论增加失败")
 		return entity.Comment{}, false
 	}
-	fmt.Println("评论添加成功")
+	fmt.Println("数据库评论添加成功")
+
 	return comment, true
 }
 
@@ -43,6 +50,11 @@ func DeleteComment_dao(commentId int64) bool {
 	// 开始删除
 	// 把cancel 设置成1
 	err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Update("cancel", 1).Error
+	//缓存
+	errRedis := UnComment2RedisWithoutUserID(comment.VideoId, redis.Ctx)
+	if errRedis != nil {
+		fmt.Println("缓存评论计数减少失败")
+	}
 	if err != nil {
 		fmt.Println("删除失败")
 		return false

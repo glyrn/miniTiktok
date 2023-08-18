@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"miniTiktok/entity"
 	"miniTiktok/util"
 )
@@ -46,7 +47,7 @@ func UpdateCanCelById(id int64, cancel int8) {
 
 // 添加关注关系
 func InsertFollow(follow entity.Follow) {
-
+	fmt.Println("数据库添加")
 	util.Error("添加关注关系出错啦:", DB.Create(&follow).Error)
 
 }

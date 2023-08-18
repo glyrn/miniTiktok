@@ -32,3 +32,6 @@ const KeyString = "mysecretkey123456789012345600000"
 
 // jwt密钥
 const JwtKey = "123456"
+
+// Redis地址
+const RedisAddr = "39.101.72.240:6379"

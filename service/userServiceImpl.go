@@ -1,6 +1,7 @@
 package service
 
 import (
+	"context"
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"miniTiktok/conf"
@@ -37,6 +38,12 @@ func (UserServiceImpl *UserServiceImpl) Insert2User(user *entity.User) bool {
 		fmt.Println("数据插入失败")
 		return false
 	}
+	ctx := context.Background()
+	err := dao.InsertUser2Redis(user.Id, ctx)
+	if err != nil {
+		fmt.Println("缓存加载失败", err)
+	}
+	fmt.Println("缓存加载成功")
 	fmt.Println("数据插入成功")
 	return true
 
