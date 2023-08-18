@@ -5,6 +5,7 @@ import (
 	"miniTiktok/controller"
 	"miniTiktok/controller/relation"
 	"miniTiktok/midddleWare/jwt"
+	"miniTiktok/midddleWare/redis"
 )
 
 func initRouter(r *gin.Engine) {
@@ -12,9 +13,9 @@ func initRouter(r *gin.Engine) {
 	apiRouter := r.Group("/douyin")
 
 	// basic apis
-	apiRouter.GET("/feed/", controller.Feed)
+	apiRouter.GET("/feed/", redis.RateLimit(), controller.Feed)
 
-	apiRouter.POST("/user/register/", controller.Register)
+	apiRouter.POST("/user/register/", redis.RateLimit(), controller.Register)
 
 	apiRouter.POST("/user/login/", controller.Login)
 
@@ -26,10 +27,10 @@ func initRouter(r *gin.Engine) {
 
 	apiRouter.GET("/comment/list/", controller.CommentList)
 
-	apiRouter.POST("/comment/action/", jwt.Authentication4Query(), controller.CommentAction)
+	apiRouter.POST("/comment/action/", jwt.Authentication4Query(), redis.RateLimit(), controller.CommentAction)
 
 	//Social apis
-	apiRouter.POST("/relation/action/", jwt.Authentication4Query(), relation.Action)
+	apiRouter.POST("/relation/action/", jwt.Authentication4Query(), redis.RateLimit(), relation.Action)
 
 	//apiRouter.GET("/relation/follow/list/", jwt.Authentication4Query(), relation.Follow)
 	apiRouter.GET("/relation/follow/list/", relation.Follow)

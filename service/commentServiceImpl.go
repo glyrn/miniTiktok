@@ -134,7 +134,7 @@ func (CommentServiceImpl CommentServiceImpl) SetCommentList2Redis(videoId int64,
 	}
 	// 存redis
 
-	err = redis.Rdb.Set(redis.Ctx, fmt.Sprintf("comment:"+strconv.FormatInt(videoId, 10)), commentJSON, 60*60*time.Second).Err()
+	err = redis.Rdb.Set(redis.Ctx, fmt.Sprintf("comment:"+strconv.FormatInt(videoId, 10)), commentJSON, 60*60*60*time.Second).Err()
 
 	return err
 }

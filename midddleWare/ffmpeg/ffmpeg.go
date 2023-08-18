@@ -27,7 +27,7 @@ func InitSSH() {
 
 	key := []byte(conf.KeyString)
 	var err error
-	//创建sshp登陆配置
+	//创建ssh登陆配置
 	SSHconfig := &ssh.ClientConfig{
 		Timeout:         5 * time.Second, //ssh 连接time out 时间一秒钟, 如果ssh验证错误 会在一秒内返回
 		User:            decrypt(conf.UserSSH, key),
