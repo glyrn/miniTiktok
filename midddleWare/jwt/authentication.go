@@ -2,75 +2,71 @@ package jwt
 
 import (
 	"fmt"
+	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"miniTiktok/conf"
 	"miniTiktok/midddleWare/redis"
 	"miniTiktok/response"
-	"miniTiktok/service"
 	"net/http"
-	"strings"
+	"strconv"
 	"time"
 )
 
-// token 从请求头得到
-func Authentication4Query() gin.HandlerFunc {
-	return func(context *gin.Context) {
-		// 取出token auth
-		authmsg := context.Query("token")
-		Auth(context, authmsg)
-	}
+type Claims struct {
+	UserId   int64  `json:"user_id"`
+	UserName string `json:"username"`
+	jwt.StandardClaims
 }
 
-// token 从表单中得到
-func Authentication4PostForm() gin.HandlerFunc {
+var JwtSecret = []byte(conf.JwtKey) // 这里使加密算法的私钥  token需要同时有公钥和私钥才能解析
+// token 鉴权中间件
+func JWT() gin.HandlerFunc {
 	return func(context *gin.Context) {
 		// 取出token auth
-		authmsg := context.Request.PostFormValue("token")
-		Auth(context, authmsg)
+		token := context.Query("token")
+		if token == "" {
+			token = context.Request.PostFormValue("token")
+		}
+		Auth(context, token)
 	}
 }
 
 // 验证
-func Auth(context *gin.Context, authmsg string) {
-	JWT := authmsg
+func Auth(context *gin.Context, tokenStr string) {
+
 	// 如果 用户不合法
-	if len(authmsg) == 0 {
+	if len(tokenStr) == 0 {
 		// 拦截请求
 		context.Abort()
 		// 传回json
-		context.JSON(http.StatusUnauthorized, response.Response{
-			StatusCode: -1,
-			StatusMsg:  "用户身份验证未通过",
+		context.JSON(http.StatusOK, response.Response{
+			StatusCode: http.StatusUnauthorized,
+			StatusMsg:  "未获取到token",
 		})
-	}
-	// JWT 规范问题 第一个bearer 第二个才是token 所以这里需要先对字符串进行切片
-	fields := strings.Fields(authmsg)
-	if len(fields) >= 2 {
-		authmsg = fields[1]
-	} else {
-		authmsg = fields[0]
 	}
 
 	// 解析token
-	token, err := service.ParseToken(authmsg)
-	if err != nil {
+	token, ok := ParseToken(tokenStr)
+	if !ok {
 		// 鉴权后不合法
 		context.Abort()
 		context.JSON(http.StatusUnauthorized, response.Response{
-			StatusCode: -1,
-			StatusMsg:  "用户身份验证未通过",
+			StatusCode: http.StatusForbidden,
+			StatusMsg:  "token 错误",
 		})
-	} else if GetJWTFromID(token.Id) != JWT {
+	} else if GetJWTFromID(strconv.FormatInt(token.UserId, 10)) != tokenStr {
 		fmt.Println("该token已经作废")
 		context.Abort()
 		context.JSON(http.StatusUnauthorized, response.Response{
-			StatusCode: -1,
+			StatusCode: http.StatusForbidden,
 			StatusMsg:  "该token已经作废，请重新登录",
 		})
 	} else {
 		fmt.Println("token正确 身份验证通过")
 	}
 
-	context.Set("userId", token.Id)
+	context.Set("userId", strconv.FormatInt(token.UserId, 10))
+	context.Set("userName", token.UserName)
 	// 身份验证通过 放行
 	context.Next()
 }
@@ -91,4 +87,58 @@ func GetJWTFromID(id string) string {
 		return ""
 	}
 	return JWT
+}
+
+/*
+这里是用于注入payload部分
+生成 token
+*/
+func CreateToken(userId int64, userName string) string {
+
+	//fmt.Println("开始合成token")
+
+	claims := Claims{
+		UserId:   userId,
+		UserName: userName,
+		StandardClaims: jwt.StandardClaims{
+			Subject:   "token",                             // 主题
+			Issuer:    "tiktok",                            // 签发者
+			IssuedAt:  time.Now().Unix(),                   // 签发时间
+			ExpiresAt: time.Now().Unix() + int64(60*60*24), // 过期时间
+			NotBefore: time.Now().Unix(),                   // 生效时间
+		},
+	}
+
+	//用加密算法生成标准JWT结构体
+	tokenClaims := jwt.NewWithClaims(jwt.SigningMethodHS256, claims)
+
+	// 对payload进行数字签名  --用header和payload以及密钥进行数字签名 得到可信token
+	token, err := tokenClaims.SignedString(JwtSecret)
+
+	if err != nil {
+		fmt.Println("token 生成失败", err)
+		return "token 生成失败"
+	} else {
+		fmt.Println("token 生成成功", token)
+		return token
+	}
+
+}
+
+func ParseToken(token string) (*Claims, bool) {
+	// 使用 jwt.ParseWithClaims 解析 JWT 令牌并提取 payload
+	//jwtToken, _ := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
+	//
+	//	fmt.Println([]byte(conf.JwtKey))
+	//	return []byte(conf.JwtKey), nil
+	//})
+	jwtToken, _ := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
+		return JwtSecret, nil
+	})
+
+	if key, _ := jwtToken.Claims.(*Claims); jwtToken.Valid { // 检查令牌是否有效，调用 jwtToken.Valid 进行验证
+		return key, true
+	} else {
+		return nil, false
+	}
 }
