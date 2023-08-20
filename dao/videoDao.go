@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"io"
 	"miniTiktok/conf"
 	"miniTiktok/entity"
@@ -68,29 +69,38 @@ func InsertVideo(video *entity.Video) bool {
 // 这里不传入id 进行自增
 // 也可以用于修改视频信息
 func SaveVideoInfo(videoName string, imageName string, authorId int64, title string) error {
+	var video entity.Video // 请替换为实际的 Video 类型
 
-	Video.PublishTime = time.Now()
-	Video.AuthorId = authorId
-	Video.Title = title
+	video.PublishTime = time.Now()
+	video.AuthorId = authorId
+	video.Title = title
 	// 这里进行拼接 url 访问地址
-	Video.PlayUrl = conf.PlayUrlPre + videoName + ".mp4"
-	Video.CoverUrl = conf.CoverUrlPre + imageName + ".jpg"
+	video.PlayUrl = conf.PlayUrlPre + videoName + ".mp4"
+	video.CoverUrl = conf.CoverUrlPre + imageName + ".jpg"
 
-	if result := DB.Save(&Video); result.Error != nil {
-		return result.Error
-	}
-	return nil
+	var err error
 
+	err = Transaction(func(tx *gorm.DB) error {
+		if result := tx.Save(&video); result.Error != nil {
+			return result.Error
+		}
+		return nil
+	})
+
+	return err
 }
 
 // 删除视频
 // 通过id删除
 func DeleteVideoById(id int64) bool {
+	err := Transaction(func(tx *gorm.DB) error {
+		if err := tx.Where("id = ?", id).Delete(&Video).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 
-	if err := DB.Where("id = ?", id).Delete(&Video).Error; err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // 修改视频 根据需求添加

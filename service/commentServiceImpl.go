@@ -29,13 +29,11 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment_dao entity.Comme
 	commentIndao.CreateDate = comment_dao.CreateDate
 
 	// 存表
-	// 这里为了取到评论的id 因为评论id是自增的 之前拿不到id的信息
 	commentRtnDao, flag := dao.Insert2Comment_dao(commentIndao)
 	if flag == false {
 		fmt.Println("评论存表失败")
 	}
 	// 存表成功
-
 	// 先更新缓存
 	err := CommentServiceImpl.DeleteCommentListFromRedis(comment_dao.VideoId)
 
@@ -59,16 +57,22 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment_dao entity.Comme
 
 // 删除评论
 func (CommentServiceImpl CommentServiceImpl) DelComment(commentId int64) error {
-	flag := dao.DeleteComment_dao(commentId)
-	if flag == true {
+	flag := dao.DeleteComment(commentId)
+	if flag {
 		fmt.Println(commentId, "评论删除成功")
+
 		// 先更新缓存
-		//err := CommentServiceImpl.DeleteCommentListFromRedis(comment_dao.VideoId)
+		videoId, _ := dao.GetVideoIdByCommentId(commentId)
+		err := CommentServiceImpl.DeleteCommentListFromRedis(videoId)
+		if err != nil {
+			fmt.Println("更新缓存错误")
+		}
+
 		return nil
-	} else {
-		fmt.Println(commentId, "删除失败")
-		return errors.New("删除失败")
 	}
+	fmt.Println(commentId, "删除失败")
+	return errors.New("删除失败")
+
 }
 
 // 查看评论列表

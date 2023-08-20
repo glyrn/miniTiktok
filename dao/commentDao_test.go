@@ -23,7 +23,7 @@ func TestInsert2Comment_dao(t *testing.T) {
 	Comment_dao, _ := Insert2Comment_dao(entity.Comment{
 		UserId:      2,
 		VideoId:     1,
-		CommentText: "我要打篮球",
+		CommentText: "我",
 		CreateDate:  time.Now(),
 		Cancel:      0,
 	})
@@ -32,5 +32,5 @@ func TestInsert2Comment_dao(t *testing.T) {
 
 func TestDeleteComment_dao(t *testing.T) {
 	InitDataBase()
-	DeleteComment_dao(4)
+	DeleteComment(1)
 }

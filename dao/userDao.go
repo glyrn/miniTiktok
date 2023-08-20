@@ -1,49 +1,47 @@
 package dao
 
 import (
-	"fmt"
+	"gorm.io/gorm"
 	"miniTiktok/entity"
 )
 
-//// 用户表
-//type User_dao struct {
-//	Id       int64
-//	Name     string
-//	Password string
-//}
-//
-//// 映射数据库表名
-//func (user User_dao) TableName() string {
-//	return "users"
-//}
-
 // 增加用户 (增)
+func Insert2User(user *entity.User) bool {
+	err := Transaction(func(DB *gorm.DB) error {
+		if err := DB.Create(user).Error; err != nil {
+			// 添加失败
+			return err
+		}
+		return nil
+	})
 
-func Insert2User(User *entity.User) bool {
-	if err := DB.Create(User).Error; err != nil {
-		fmt.Println(err)
-		//添加失败
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // 删除用户
-// 通过id删除
+// 通过id删除 - 后期后台管理使用 暂时无
 func DeleteUserById(id int64) bool {
+	err := Transaction(func(DB *gorm.DB) error {
+		if err := DB.Where("id = ?", id).Delete(&entity.User{}).Error; err != nil {
+			return err
+		}
+		return nil
+	})
 
-	if err := DB.Where("id = ?", id).Delete(&entity.User{}).Error; err != nil {
-		return false
-	}
-	return true
+	return err == nil
 }
 
 // 修改用户
 func UpdateUser(user *entity.User) bool {
-	if err := DB.Save(user).Error; err != nil {
-		return false
-	}
-	return true
+
+	err := Transaction(func(DB *gorm.DB) error {
+		if err := DB.Save(user).Error; err != nil {
+			return err
+		}
+		return nil
+	})
+
+	return err == nil
 }
 
 // 查询用户

@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"gorm.io/gorm"
 	"miniTiktok/entity"
 	"miniTiktok/util"
 )
@@ -37,18 +38,25 @@ func GetTotalityByFollowerId(followerId int64) int64 {
 // 通过 id 修改 cancel状态
 func UpdateCanCelById(id int64, cancel int8) {
 
-	err := DB.Model(&follow).Where("id", id).Update("cancel", cancel).Error
+	err := Transaction(func(DB *gorm.DB) error {
+		return DB.Model(&follow).Where("id", id).Update("cancel", cancel).Error
+	})
 
-	//如果err为空不会执行
-	util.Error("通过 id 修改 cancel状态出错啦：", err)
+	if err != nil {
+		util.Error("通过 id 修改 cancel状态出错啦：", err)
+	}
 
 }
 
 // 添加关注关系
 func InsertFollow(follow entity.Follow) {
+	err := Transaction(func(DB *gorm.DB) error {
+		return DB.Create(&follow).Error
+	})
 
-	util.Error("添加关注关系出错啦:", DB.Create(&follow).Error)
-
+	if err != nil {
+		util.Error("添加关注关系出错啦:", err)
+	}
 }
 
 // 获取 id

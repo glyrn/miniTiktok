@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"gorm.io/gorm"
 	"miniTiktok/entity"
 	"time"
 )
@@ -30,11 +31,17 @@ func ActionMessage(toUserId int64, fromUserId int64, content string) error {
 		CreateTime: time.Now().Unix(),
 	}
 
-	// 插入数据库
-	result := DB.Create(&message)
-	if result.Error != nil {
-		fmt.Println("发送消息失败", result.Error.Error())
-		return result.Error
-	}
-	return nil
+	var err error
+
+	err = Transaction(func(tx *gorm.DB) error {
+		// 插入数据库
+		result := tx.Create(&message)
+		if result.Error != nil {
+			fmt.Println("发送消息失败", result.Error.Error())
+			return result.Error
+		}
+		return nil
+	})
+
+	return err
 }

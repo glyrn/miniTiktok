@@ -35,7 +35,7 @@ func Feed(c *gin.Context) {
 	fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
 	// 传入时间不为空，则把字符串转换成数字。
-	if len(inputTime) != 0 {
+	if inputTime != "0" {
 		fmt.Println("获取到传入时间：" + inputTime)
 		me, err := strconv.ParseInt(inputTime, 10, 64)
 		if err != nil {

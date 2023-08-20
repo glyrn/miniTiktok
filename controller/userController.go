@@ -64,8 +64,16 @@ func Register(context *gin.Context) {
 		if err != nil {
 			fmt.Println("从表中获取对象错误")
 		}
-		token := service.CreateTokenByUserName(userInTable.Name)
-		fmt.Println("用户的id是", userInTable.Id)
+		token := jwt.CreateToken(userInTable.Id, userInTable.Name)
+
+		// 存JWT令牌
+		err = jwt.SetJWT2Redis(strconv.FormatInt(user.Id, 10), token)
+
+		if err != nil {
+			fmt.Println("保存 JWT 令牌失败")
+		}
+
+		//fmt.Println("用户的id是", userInTable.Id)
 
 		context.JSON(http.StatusOK, LoginResponse{
 			Response: Response{StatusCode: 0},
@@ -89,7 +97,8 @@ func Login(context *gin.Context) {
 
 	if passWord == user.Password {
 		// 通过登录验证
-		token := service.CreateTokenByUserName(userName)
+
+		token := jwt.CreateToken(user.Id, user.Name)
 
 		// 存JWT令牌
 		err := jwt.SetJWT2Redis(strconv.FormatInt(user.Id, 10), token)
@@ -117,6 +126,7 @@ func Login(context *gin.Context) {
 // 用户信息接口  用户登录成功之后会马上请求这个接口
 func UserInfo(contest *gin.Context) {
 	userId := contest.GetString("userId")
+
 	id, err := strconv.ParseInt(userId, 10, 64)
 	if err != nil {
 		fmt.Println("获取id失败")

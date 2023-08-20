@@ -50,3 +50,19 @@ func InitDataBase() {
 	DB = db
 	fmt.Println("数据库连接成功")
 }
+
+// 封装事务操作
+func Transaction(fn func(*gorm.DB) error) error {
+	tx := DB.Begin()
+	if tx.Error != nil {
+		return tx.Error
+	}
+
+	err := fn(tx)
+	if err != nil {
+		tx.Rollback()
+		return err
+	}
+
+	return tx.Commit().Error
+}

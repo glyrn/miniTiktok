@@ -3,6 +3,7 @@ package dao
 import (
 	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"time"
 )
 
@@ -20,17 +21,29 @@ func (Likes_dao) TableName() string {
 
 // 点赞
 func Insert2Likes_dao(likes Likes_dao) (Likes_dao, bool) {
-	if likes.Cancel == 1 {
-		fmt.Println("恢复点赞")
-		return likes, true
-	}
-	err := DB.Create(&likes).Error
+	var insertedLikes Likes_dao
+
+	err := Transaction(func(DB *gorm.DB) error {
+		if likes.Cancel == 1 {
+			fmt.Println("恢复点赞")
+			insertedLikes = likes
+			return nil
+		}
+
+		if err := DB.Create(&likes).Error; err != nil {
+			return err
+		}
+		insertedLikes = likes
+		return nil
+	})
+
 	if err != nil {
 		fmt.Println("点赞失败")
 		return Likes_dao{}, false
 	}
+
 	fmt.Println("点赞添加成功")
-	return likes, true
+	return insertedLikes, true
 }
 
 // 根据视频id 获取该视频的点赞总数
@@ -89,42 +102,75 @@ func GetLikesListByVideoId(videoId int64) ([]Likes_dao, error) {
 // 传入用户的id
 // 其实我还是想用删除的，不过既然有这个cancel的存在，那么不如直接用了
 func DeleteLikesByUserId(UserId int64, VideoId int64) bool {
-	var likes_dao Likes_dao
-	// 先查询id是否存在
-	result := DB.Where("user_id = ? AND video_id = ? AND cancel = ?", UserId, VideoId, 0).First(&likes_dao)
-	if result.RowsAffected == 0 {
-		fmt.Println("当前没有点赞")
-		return false
-	}
-	// 开始删除
-	// 把cancel 设置成1
-	err := DB.Model(Likes_dao{}).Where("user_id = ? AND video_id = ?", UserId, VideoId).Update("cancel", 1).Error
-	if err != nil {
-		fmt.Println("取消失败")
-		return false
-	}
-	fmt.Println("该用户的点赞已经取消")
-	return true
+	//var likes_dao Likes_dao
+	//// 先查询id是否存在
+	//result := DB.Where("user_id = ? AND video_id = ? AND cancel = ?", UserId, VideoId, 0).First(&likes_dao)
+	//if result.RowsAffected == 0 {
+	//	fmt.Println("当前没有点赞")
+	//	return false
+	//}
+	//// 开始删除
+	//// 把cancel 设置成1
+	//err := DB.Model(Likes_dao{}).Where("user_id = ? AND video_id = ?", UserId, VideoId).Update("cancel", 1).Error
+	//if err != nil {
+	//	fmt.Println("取消失败")
+	//	return false
+	//}
+	//fmt.Println("该用户的点赞已经取消")
+	//return true
+
+	err := Transaction(func(DB *gorm.DB) error {
+		var likes_dao Likes_dao
+
+		// 先查询id是否存在
+		result := DB.Where("user_id = ? AND video_id = ? AND cancel = ?", UserId, VideoId, 0).First(&likes_dao)
+		if result.RowsAffected == 0 {
+			fmt.Println("当前没有点赞")
+			return errors.New("当前没有点赞")
+		}
+
+		// 开始删除
+		// 把cancel 设置成1
+		err := DB.Model(Likes_dao{}).Where("user_id = ? AND video_id = ?", UserId, VideoId).Update("cancel", 1).Error
+		if err != nil {
+			fmt.Println("取消失败")
+			return err
+		}
+		fmt.Println("该用户的点赞已经取消")
+		return nil
+	})
+
+	return err == nil
+
 }
 
 // 补充一个改的操作
 func UpdateLikesByUserId(UserId int64, VideoId int64) (Likes_dao, bool) {
 	var likes_dao Likes_dao
-	// 先查询id是否存在
-	result := DB.Where("user_id = ? AND video_id=?", UserId, VideoId).First(&likes_dao)
-	if result.RowsAffected == 0 {
-		fmt.Println("当前没有点赞")
-		return likes_dao, false
-	}
-	// 开始恢复
-	// 把cancel 设置成0
-	err := DB.Model(Likes_dao{}).Where("id = ?", likes_dao.Id).Update("cancel", 0).Error
-	if err != nil {
-		fmt.Println("点赞恢复失败")
-		return likes_dao, false
-	}
-	fmt.Println("该用户的点赞已经恢复")
-	return likes_dao, true
+
+	var updatedLikes Likes_dao
+
+	err := Transaction(func(tx *gorm.DB) error {
+		// 先查询id是否存在
+		result := tx.Where("user_id = ? AND video_id=?", UserId, VideoId).First(&likes_dao)
+		if result.RowsAffected == 0 {
+			fmt.Println("当前没有点赞")
+			return errors.New("当前没有点赞")
+		}
+
+		// 开始恢复
+		// 把cancel 设置成0
+		err := tx.Model(Likes_dao{}).Where("id = ?", likes_dao.Id).Update("cancel", 0).Error
+		if err != nil {
+			fmt.Println("点赞恢复失败")
+			return err
+		}
+
+		updatedLikes = likes_dao
+		return nil
+	})
+
+	return updatedLikes, err == nil
 }
 
 // 后期补的

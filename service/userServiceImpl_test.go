@@ -42,7 +42,7 @@ func TestCreateTokenByUser_dao(t *testing.T) {
 		Password: "123456",
 	}
 
-	CreateTokenByUser_dao(user)
+	CreateTokenByUser(user)
 }
 
 func TestCreateTokenByUserName(t *testing.T) {

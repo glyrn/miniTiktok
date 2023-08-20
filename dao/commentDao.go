@@ -1,55 +1,58 @@
 package dao
 
 import (
+	"errors"
 	"fmt"
+	"gorm.io/gorm"
 	"miniTiktok/entity"
 )
 
-//type Comment_dao struct {
-//	Id          int64
-//	UserId      int64
-//	VideoId     int64
-//	CommentText string
-//	CreateDate  time.Time
-//	Cancel      int32
-//}
-//
-//func (Comment_dao) TableName() string {
-//	return "comments"
-//}
-
 // 发表评论
 func Insert2Comment_dao(comment entity.Comment) (entity.Comment, bool) {
-	err := DB.Create(&comment).Error
+	var insertedComment entity.Comment
+	err := Transaction(func(DB *gorm.DB) error {
+		if err := DB.Create(&comment).Error; err != nil {
+			return err
+		}
+		insertedComment = comment
+		return nil
+	})
+
 	if err != nil {
 		fmt.Println("评论增加失败")
 		return entity.Comment{}, false
 	}
+
 	fmt.Println("评论添加成功")
-	return comment, true
+	return insertedComment, true
 }
 
 // 删除评论
 // 这里不是删除，而是把取消那一栏设置成0
 // 传入评论id
-func DeleteComment_dao(commentId int64) bool {
+func DeleteComment(commentId int64) bool {
 	var comment entity.Comment
-	// 先查询id是否存在
-	result := DB.Where("id = ? AND cancel = ?", commentId, 0).First(&comment)
-	if result.RowsAffected == 0 {
-		fmt.Println("评论不存在")
-		return false
-	}
-	// 开始删除
-	// 把cancel 设置成1
-	err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Update("cancel", 1).Error
-	if err != nil {
-		fmt.Println("删除失败")
-		return false
-	}
-	fmt.Println("评论删除成功")
-	return true
 
+	err := Transaction(func(DB *gorm.DB) error {
+		// 先查询id是否存在
+		result := DB.Where("id = ? AND cancel = ?", commentId, 0).First(&comment)
+		if result.RowsAffected == 0 {
+			fmt.Println("评论不存在")
+			return errors.New("评论不存在")
+		}
+
+		// 开始删除
+		// 把cancel 设置成1
+		err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Update("cancel", 1).Error
+		if err != nil {
+			fmt.Println("删除失败")
+			return err
+		}
+		fmt.Println("评论删除成功")
+		return nil
+	})
+
+	return err == nil
 }
 
 // 根据视频id 获取评论列表
@@ -92,4 +95,16 @@ func GetCommentCountByVideoId(videoId int64) (int64, error) {
 	}
 	fmt.Println("获取评论数量为", commentCount)
 	return commentCount, nil
+}
+
+// 根据评论id  查询所在的视频id
+func GetVideoIdByCommentId(commentId int64) (int64, error) {
+	var VideoId int64
+	err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Select("video_id").Scan(&VideoId).Error
+
+	if err != nil {
+		fmt.Println("GetVideoIdByCommentId 错误")
+		return 0, err
+	}
+	return VideoId, nil
 }
