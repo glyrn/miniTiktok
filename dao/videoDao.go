@@ -75,8 +75,8 @@ func SaveVideoInfo(videoName string, imageName string, authorId int64, title str
 	video.AuthorId = authorId
 	video.Title = title
 	// 这里进行拼接 url 访问地址
-	video.PlayUrl = conf.PlayUrlPre + videoName + ".mp4"
-	video.CoverUrl = conf.CoverUrlPre + imageName + ".jpg"
+	video.PlayUrl = conf.Conf.App.PlayUrlPre + videoName + ".mp4"
+	video.CoverUrl = conf.Conf.App.CoverUrlPre + imageName + ".jpg"
 
 	var err error
 
@@ -140,7 +140,7 @@ func GetVideosByCurTime(curTime time.Time) ([]entity.Video, error) {
 
 	// 使用GORM的链式调用查询并按照距离targetTime最近的时间进行排序
 	if err := DB.Where("publish_time <= ?", curTime).Order("publish_time desc").
-		Limit(conf.VideoCount).Find(&videos).Error; err != nil {
+		Limit(conf.Conf.App.VideoCount).Find(&videos).Error; err != nil {
 		return nil, err
 	}
 

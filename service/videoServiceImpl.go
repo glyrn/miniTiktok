@@ -36,7 +36,7 @@ func NewVideoServiceImpl() VideoServiceImpl {
 func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]pojo.Video, time.Time, error) {
 	// 创建返回的视频数组切片
 	// 这里通过VideoCount来限制预加载数量 ，同时预制切片容量 提高性能
-	videos_service := make([]pojo.Video, 0, conf.VideoCount)
+	videos_service := make([]pojo.Video, 0, conf.Conf.App.VideoCount)
 	// 根据传入的当前时间，获取传入时间前n个视频
 	Videos_dao, err := dao.GetVideosByCurTime(lastTime)
 	if err != nil {

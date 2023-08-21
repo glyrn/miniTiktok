@@ -25,22 +25,22 @@ var ClientSSH *ssh.Client
 
 func InitSSH() {
 
-	key := []byte(conf.KeyString)
+	key := []byte(conf.Conf.Security.KeyString)
 	var err error
 	//创建ssh登陆配置
 	SSHconfig := &ssh.ClientConfig{
 		Timeout:         5 * time.Second, //ssh 连接time out 时间一秒钟, 如果ssh验证错误 会在一秒内返回
-		User:            decrypt(conf.UserSSH, key),
+		User:            decrypt(conf.Conf.Ssh.User, key),
 		HostKeyCallback: ssh.InsecureIgnoreHostKey(), //通过密码方式连接服务器，但是不够安全
 
 	}
 
 	// 连接
 
-	SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(decrypt(conf.PasswordSSH, key))}
+	SSHconfig.Auth = []ssh.AuthMethod{ssh.Password(decrypt(conf.Conf.Ssh.Password, key))}
 
 	// 登录，创建会话
-	addr := fmt.Sprintf("%s:%d", conf.HostSSH, conf.PortSSH)
+	addr := fmt.Sprintf("%s:%d", conf.Conf.Ssh.Host, conf.Conf.Ssh.Port)
 	ClientSSH, err = ssh.Dial("tcp", addr, SSHconfig)
 	if err != nil {
 		fmt.Println("创建会话失败", err)
@@ -71,7 +71,7 @@ func SaveVideoCover(videoName string, imageName string) error {
 
 // 维持会话长连接
 func keepAlive() {
-	time.Sleep(time.Duration(conf.SSHLiveTime) * time.Second)
+	time.Sleep(time.Duration(conf.Conf.Ssh.LiveTime) * time.Second)
 	session, _ := ClientSSH.NewSession()
 	session.Close()
 }

@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"miniTiktok/conf"
 	"miniTiktok/dao"
 	"miniTiktok/midddleWare/bloomFilter"
 	"miniTiktok/midddleWare/ffmpeg"
@@ -13,6 +14,9 @@ import (
 func main() {
 
 	// 这里是与提供服务的服务器建立连接
+
+	// 加载配置文件
+	conf.InitConf()
 
 	// 连接mysql
 	dao.InitDataBase()

@@ -21,11 +21,11 @@ type config struct {
 func InitDataBase() {
 
 	conf := &config{
-		user:   conf.User,   // 用户名
-		pass:   conf.Pass,   // 密码
-		adrr:   conf.Adrr,   // 地址
-		port:   conf.Port,   // 端口
-		dbname: conf.Dbname, // 数据库名称
+		user:   conf.Conf.Database.User,   // 用户名
+		pass:   conf.Conf.Database.Pass,   // 密码
+		adrr:   conf.Conf.Database.Addr,   // 地址
+		port:   conf.Conf.Database.Port,   // 端口
+		dbname: conf.Conf.Database.Dbname, // 数据库名称
 	}
 	// 加载数据库连接的链接
 	dsn := fmt.Sprintf("%s:%s@tcp(%s:%v)/%s?charset=utf8&parseTime=True&loc=Local", conf.user, conf.pass, conf.adrr, conf.port, conf.dbname)

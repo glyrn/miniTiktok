@@ -1,34 +1,78 @@
 package conf
 
-// ftp服务器相关配置
-const FtpHost = "39.101.72.240:210" // 这里的控制端口映射是210 默认映射端口是21
-const FtpUsername = "user"
-const FtpPassword = "123456"
-const LiveTime = 120
+import (
+	"fmt"
+	"gopkg.in/yaml.v2"
+	"io/ioutil"
+	"net/http"
+)
 
-// HostSSH SSH配置
-const HostSSH = "39.101.72.240"
-const UserSSH = "7m5GUXUK09tu5jQz.knr4RfKIQA+oo0tR92/xfnIP6JU="
-const PasswordSSH = "tFJ7I5SD5fQQV1Ao.Q/VwOeIhPxg78Dc9hNtd/mPHz1QrYuKlFuczQvHuRw=="
-const PortSSH = 22
-const SSHLiveTime = 10 * 60
+var Conf Config = Config{}
 
-// VideoCount 每次获取视频流的数量
-const VideoCount = 3
+type Config struct {
+	Ftp struct {
+		Host     string `yaml:"host"`
+		Username string `yaml:"username"`
+		Password string `yaml:"password"`
+		LiveTime int    `yaml:"liveTime"`
+	} `yaml:"ftp"`
 
-// UrlPre 存储的图片和视频的链接的前缀信息
-const PlayUrlPre = "http://39.101.72.240:9002/videos/"
-const CoverUrlPre = "http://39.101.72.240:9002/images/"
+	Ssh struct {
+		Host     string `yaml:"host"`
+		User     string `yaml:"user"`
+		Password string `yaml:"password"`
+		Port     int    `yaml:"port"`
+		LiveTime int    `yaml:"liveTime"`
+	} `yaml:"ssh"`
 
-// 数据库配置 可根据生产环境改动
-const User = "guest"         // 用户名
-const Pass = "123456"        // 密码
-const Adrr = "39.101.72.240" // 地址
-const Port = "3306"          // 端口
-const Dbname = "tiktok"      // 数据库名称
+	App struct {
+		VideoCount  int    `yaml:"videoCount"`
+		PlayUrlPre  string `yaml:"playUrlPre"`
+		CoverUrlPre string `yaml:"coverUrlPre"`
+	} `yaml:"app"`
 
-// 加密算法密钥
-const KeyString = "mysecretkey123456789012345600000"
+	Database struct {
+		User   string `yaml:"user"`
+		Pass   string `yaml:"pass"`
+		Addr   string `yaml:"addr"`
+		Port   string `yaml:"port"`
+		Dbname string `yaml:"dbname"`
+	} `yaml:"database"`
 
-// jwt密钥
-const JwtKey = "123456"
+	Security struct {
+		KeyString string `yaml:"keyString"`
+		JwtKey    string `yaml:"jwtKey"`
+	} `yaml:"security"`
+
+	Redis struct {
+		Addr string `yaml:"addr"`
+		Pass string `yaml:"pass"`
+	} `yaml:"redis"`
+}
+
+func InitConf() {
+	remoteConfigURL := "http://39.101.72.240:9002/config/configration.yaml"
+
+	resp, err := http.Get(remoteConfigURL)
+
+	if err != nil {
+		fmt.Println("获取配置文件失败")
+	}
+	defer resp.Body.Close()
+
+	// 读取响应体
+	body, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		fmt.Println("读取响应体失败")
+	}
+	// 解析yaml到结构体
+
+	Conf = Config{}
+
+	err = yaml.Unmarshal(body, &Conf)
+	if err != nil {
+		fmt.Println("Error unmarshaling YAML", err)
+	}
+	fmt.Println(Conf.Database.Port)
+
+}

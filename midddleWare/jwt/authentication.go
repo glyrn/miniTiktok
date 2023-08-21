@@ -19,7 +19,7 @@ type Claims struct {
 	jwt.StandardClaims
 }
 
-var JwtSecret = []byte(conf.JwtKey) // 这里使加密算法的私钥
+var JwtSecret = []byte(conf.Conf.Security.JwtKey) // 这里使加密算法的私钥
 // token 鉴权中间件
 func JWT() gin.HandlerFunc {
 	return func(context *gin.Context) {
