@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/dgrijalva/jwt-go"
 	"github.com/gin-gonic/gin"
+	"math"
 	"miniTiktok/conf"
 	"miniTiktok/midddleWare/redis"
 	"miniTiktok/response"
@@ -86,6 +87,8 @@ func GetJWTFromID(id string) string {
 	if err != nil {
 		return ""
 	}
+	// 如果存在 延长jwt令牌过期时间
+	redis.Rdb15.Set(redis.Ctx, "userID:"+id, JWT, 60*60*24*time.Second)
 	return JWT
 }
 
@@ -101,11 +104,11 @@ func CreateToken(userId int64, userName string) string {
 		UserId:   userId,
 		UserName: userName,
 		StandardClaims: jwt.StandardClaims{
-			Subject:   "token",                             // 主题
-			Issuer:    "tiktok",                            // 签发者
-			IssuedAt:  time.Now().Unix(),                   // 签发时间
-			ExpiresAt: time.Now().Unix() + int64(60*60*24), // 过期时间
-			NotBefore: time.Now().Unix(),                   // 生效时间
+			Subject:   "token",           // 主题
+			Issuer:    "tiktok",          // 签发者
+			IssuedAt:  time.Now().Unix(), // 签发时间
+			ExpiresAt: math.MaxInt64,     // 过期时间 永不过期 -> 通过redis主动控制过期时间
+			NotBefore: time.Now().Unix(), // 生效时间
 		},
 	}
 
@@ -126,12 +129,7 @@ func CreateToken(userId int64, userName string) string {
 }
 
 func ParseToken(token string) (*Claims, bool) {
-	// 使用 jwt.ParseWithClaims 解析 JWT 令牌并提取 payload
-	//jwtToken, _ := jwt.ParseWithClaims(token, &jwt.StandardClaims{}, func(token *jwt.Token) (interface{}, error) {
-	//
-	//	fmt.Println([]byte(conf.JwtKey))
-	//	return []byte(conf.JwtKey), nil
-	//})
+
 	jwtToken, _ := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {
 		return JwtSecret, nil
 	})
