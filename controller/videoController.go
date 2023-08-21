@@ -3,10 +3,12 @@ package controller
 import (
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"mime/multipart"
 	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
+	"sync"
 	"time"
 )
 
@@ -23,6 +25,13 @@ type FeedResponse struct {
 	NextTime  int64        `json:"next_time"`
 }
 
+type VideoTask struct {
+	UserId int64
+	Title  string
+	Data   *multipart.FileHeader // 视频文件数据
+
+}
+
 // 获取视频列表响应码 不带nexttime
 type VideoResponse struct {
 	Response
@@ -30,7 +39,7 @@ type VideoResponse struct {
 }
 
 func Feed(c *gin.Context) {
-	// 这里需要的是用户上一次刷视频的时间 方便推送上一次视频之后的视频 由于latest_time字段是可选项 不填代表没看 是当前时间
+	// 这里需要的是用户上一次刷视频的时间 方便推送上一次视频之后的视频 由于latest_time字段是可选项 0 代表没看 是当前时间
 	inputTime := c.Query("latest_time")
 	fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
@@ -76,7 +85,6 @@ func Feed(c *gin.Context) {
 
 }
 
-// 上传视频
 func Publish(context *gin.Context) {
 	data, err := context.FormFile("data")
 	if err != nil {
@@ -88,31 +96,64 @@ func Publish(context *gin.Context) {
 		return
 	}
 
-	userId, err_ := strconv.ParseInt(context.GetString("userId"), 10, 64)
-	if err_ != nil {
+	userId, err := strconv.ParseInt(context.GetString("userId"), 10, 64)
+	if err != nil {
 		fmt.Println("用户id解析失败")
+		context.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "用户id解析失败",
+		})
+		return
 	}
-	fmt.Println("上传视频的用户id：", userId)
+
 	title := context.PostForm("title")
-	fmt.Println("title:", title)
+
+	// 立即返回响应
+	context.JSON(http.StatusOK, Response{
+		StatusCode: 0,
+		StatusMsg:  "视频上传已开始",
+	})
+
+	// 创建任务通道
+	var poolSize = 20
+	taskChan := make(chan VideoTask, poolSize)
 
 	videoService := service.NewVideoServiceImpl()
 
-	err = videoService.Publish(data, userId, title)
-	if err != nil {
-		fmt.Println("视频上传失败")
-		context.JSON(http.StatusOK, Response{
-			StatusCode: 1,
-			StatusMsg:  "视频上传失败",
-		})
+	// 复用 goroutine
+	goroutinePool := &sync.Pool{
+		New: func() interface{} {
+			return make(chan struct{}, 1)
+		},
 	}
-	fmt.Println("上传视频成功")
 
-	context.JSON(http.StatusOK, Response{
-		StatusCode: 0,
-		StatusMsg:  "",
-	})
+	// 启动 goroutine 来执行上传任务
+	for i := 0; i < poolSize; i++ {
+		go func() {
+			for task := range taskChan {
+				workerChan := goroutinePool.Get().(chan struct{})
+				go func(task VideoTask) {
+					defer goroutinePool.Put(workerChan)
+					defer close(workerChan)
 
+					err := videoService.Publish(task.Data, task.UserId, task.Title)
+					if err != nil {
+						fmt.Println("视频上传失败")
+					} else {
+						fmt.Println("上传视频成功")
+					}
+				}(task)
+				<-workerChan
+			}
+		}()
+	}
+
+	// 添加任务到任务通道
+
+	taskChan <- VideoTask{Data: data, UserId: userId, Title: title}
+
+	// 关闭任务通道
+	close(taskChan)
 }
 
 // 查找用户发布的视频列表

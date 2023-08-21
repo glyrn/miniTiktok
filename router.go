@@ -10,44 +10,71 @@ import (
 
 func initRouter(r *gin.Engine) {
 
-	apiRouter := r.Group("/douyin")
+	mainGroup := r.Group("/douyin")
 
-	// basic apis
-	apiRouter.GET("/feed/", redis.RateLimit(), controller.Feed)
+	mainGroup.GET("/feed/", redis.RateLimit(), controller.Feed)
 
-	apiRouter.POST("/user/register/", redis.RateLimit(), controller.Register)
+	{
+		// user 路由
+		userGroup := mainGroup.Group("/user")
+		{
+			// 用户信息
+			userGroup.GET("/", jwt.JWT(), controller.UserInfo)
+			// 用户注册
+			userGroup.POST("/register/", redis.RateLimit(), controller.Register)
+			// 用户登录
+			userGroup.POST("/login/", controller.Login)
+		}
 
-	apiRouter.POST("/user/login/", controller.Login)
+		// publish 路由
+		publishGroup := mainGroup.Group("/publish")
+		{
+			// 上传视频
+			publishGroup.POST("/action/", jwt.JWT(), controller.Publish)
+			// 作品列表
+			publishGroup.GET("/list/", controller.ShowPublishList)
+		}
 
-	apiRouter.GET("/user/", jwt.JWT(), controller.UserInfo)
+		// comment 路由
+		commentGroup := mainGroup.Group("/comment")
+		{
+			// 评论列表
+			commentGroup.GET("/list/", controller.CommentList)
+			// 评论视频
+			commentGroup.POST("/action/", jwt.JWT(), redis.RateLimit(), controller.CommentAction)
+		}
 
-	apiRouter.POST("/publish/action/", jwt.JWT(), controller.Publish)
+		// relation 路由
+		relationGroup := mainGroup.Group("/relation")
+		{
+			// 关注
+			relationGroup.POST("/action/", jwt.JWT(), redis.RateLimit(), relation.Action)
+			// 关注列表
+			relationGroup.GET("/follow/list/", relation.Follow)
+			// 粉丝列表
+			relationGroup.GET("/follower/list/", relation.Follower)
+			// 朋友列表
+			relationGroup.GET("/friend/list/", jwt.JWT(), relation.Friend)
+		}
 
-	apiRouter.GET("/publish/list/", controller.ShowPublishList)
+		// favorite 路由
+		favoriteGroup := mainGroup.Group("/favorite")
+		{
+			// 点赞
+			favoriteGroup.POST("/action/", jwt.JWT(), controller.LikesAction)
+			// 喜欢视频列表
+			favoriteGroup.GET("/list/", jwt.JWT(), controller.LikesList)
+		}
 
-	apiRouter.GET("/comment/list/", controller.CommentList)
+		// message 路由
+		messageGroup := mainGroup.Group("/message")
+		{
+			//发送消息
+			messageGroup.POST("/action/", jwt.JWT(), controller.MessageAction)
+			//获取聊天记录
+			messageGroup.GET("/chat/", jwt.JWT(), controller.MessageList)
+		}
 
-	apiRouter.POST("/comment/action/", jwt.JWT(), redis.RateLimit(), controller.CommentAction)
-
-	//Social apis
-	apiRouter.POST("/relation/action/", jwt.JWT(), redis.RateLimit(), relation.Action)
-
-	//apiRouter.GET("/relation/follow/list/", jwt.JWT(), relation.Follow)
-	apiRouter.GET("/relation/follow/list/", relation.Follow)
-
-	//apiRouter.GET("/relation/follower/list/", jwt.JWT(), relation.Follower)
-	apiRouter.GET("/relation/follower/list/", relation.Follower)
-
-	apiRouter.GET("/relation/friend/list/", jwt.JWT(), relation.Friend)
-
-	//点赞的接口
-	apiRouter.POST("/favorite/action/", jwt.JWT(), controller.LikesAction)
-	//用户的点赞列表
-	apiRouter.GET("/favorite/list/", jwt.JWT(), controller.LikesList)
-
-	//发送消息
-	apiRouter.POST("/message/action/", jwt.JWT(), controller.MessageAction)
-	//获取聊天记录
-	apiRouter.GET("/message/chat/", jwt.JWT(), controller.MessageList)
+	}
 
 }

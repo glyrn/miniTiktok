@@ -28,6 +28,7 @@ func TestGetUserByName(t *testing.T) {
 }
 
 func TestGetUser_serviceById(t *testing.T) {
+
 	dao.InitDataBase()
 	userServiceImpl := UserServiceImpl{}
 	fmt.Println("开始执行GetUser_serviceById")
