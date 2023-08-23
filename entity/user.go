@@ -4,7 +4,7 @@ package entity
 type User struct {
 	Id       int64  `json:"id"`
 	Name     string `json:"name"`
-	Password string
+	Password string `json:"-"`
 
 	FollowCount   int64 `json:"follower_count"`
 	FollowerCount int64 `json:"follow_count"`
