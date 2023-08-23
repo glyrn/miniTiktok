@@ -8,23 +8,6 @@ import (
 
 // 定义服务实现类
 type FollowServiceImpl struct {
-	//FollowService
-}
-
-// 通过 id 查询用户的总关注数量
-func GetCancelById(userId int64) int64 {
-
-	cut := dao.GetCancelById(userId)
-
-	return cut
-}
-
-// 通过被关注的 Id 查询总粉丝数
-func GetTotalityByFollowerId(followerId int64) int64 {
-
-	id := dao.GetTotalityByFollowerId(followerId)
-
-	return id
 }
 
 // 添加或取消关注
@@ -41,14 +24,6 @@ func (fsi *FollowServiceImpl) InsertFollow(userId, toUserId, account int64) {
 		dao.InsertFollow(follow)
 	}
 
-}
-
-// 根据id获取粉丝和关注总数
-func (fsi *FollowServiceImpl) GetFansDndAttention(id int64) (int64, int64) {
-	cancel := GetCancelById(id)
-	totality := GetTotalityByFollowerId(id)
-
-	return cancel, totality
 }
 
 // 获取用户粉丝列表和关注列表

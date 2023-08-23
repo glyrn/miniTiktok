@@ -77,7 +77,7 @@ func LikesAction(context *gin.Context) {
 
 	if actionType == 1 {
 		// 增加点赞
-		err := likeService.AddLikes(userId, videoId)
+		err := likeService.AddFavorite(userId, videoId)
 		// 发表失败
 		if err != nil {
 			context.JSON(http.StatusOK, LikesActionResponse{Response: Response{
@@ -98,7 +98,7 @@ func LikesAction(context *gin.Context) {
 	} else if actionType == 2 { // 取消点赞 把cancel赋值 1
 		// 开始取消点赞
 		fmt.Println("取消点赞中", videoId)
-		err = likeService.DelLikes(userId, videoId)
+		err = likeService.DelFavorite(userId, videoId)
 		if err != nil {
 			// 删除失败
 			context.JSON(http.StatusOK, LikesActionResponse{Response: Response{

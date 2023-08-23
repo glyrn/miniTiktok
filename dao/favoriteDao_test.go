@@ -19,7 +19,7 @@ func TestGetLikesCountByVideoId(t *testing.T) {
 // 因为这里的ID是自增的
 func TestInsert2Likes_dao(t *testing.T) {
 	InitDataBase()
-	Insert2Likes_dao(Favorite{
+	Insert2Likes(Favorite{
 		UserId:  3,
 		VideoId: 1,
 		Cancel:  0,

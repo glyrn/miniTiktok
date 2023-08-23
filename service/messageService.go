@@ -13,7 +13,6 @@ import (
 )
 
 type MessageServiceImpl struct {
-	//MessageService
 }
 
 func (messageServiceImpl MessageServiceImpl) InsetChat(toUserId int64, fromUserId int64, content string) error {

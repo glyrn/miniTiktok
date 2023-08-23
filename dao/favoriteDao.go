@@ -21,7 +21,7 @@ func (Favorite) TableName() string {
 }
 
 // 点赞
-func Insert2Likes_dao(likes Favorite) (Favorite, bool) {
+func Insert2Likes(likes Favorite) (Favorite, bool) {
 	var insertedLikes Favorite
 
 	err := Transaction(func(DB *gorm.DB) error {

@@ -12,7 +12,6 @@ import (
 )
 
 type CommentServiceImpl struct {
-	//UserService
 }
 type CommentRtn struct {
 	entity.Comment
@@ -38,13 +37,7 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment entity.Comment) 
 	if err != nil {
 		fmt.Println("用户信息查询错误")
 	}
-	// 组装信息
-	//commentRtn := pojo.Comment{
-	//	Id:           commentRtnDao.Id,
-	//	User_service: User_serverFromSearch,
-	//	Content:      commentRtnDao.CommentText,
-	//	CreateData:   commentRtnDao.CreateDate.Format("2006-01-02 15:04:05"),
-	//}
+
 	commentRtnDao.DateStr = commentRtnDao.CreateDate.Format("2006-01-02 15:04:05")
 	commentRtn := CommentRtn{
 		Comment: commentRtnDao,
@@ -94,11 +87,7 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]Co
 
 		var commentRtn CommentRtn
 		impl := UserServiceImpl{}
-		//comment_service.Id = comment.Id
-		//comment_service.Content = comment.CommentText
-		//comment_service.CreateData = comment.CreateDate.Format("2006-01-02 15:04:05")
-		//comment_service.User_service, err = impl.GetUserById(comment.UserId)
-		//commentRtn.Comment.CreateDate = comment.CreateDate.Format("2006-01-02 15:04:05")
+
 		commentRtn.Comment.DateStr = commentRtn.Comment.CreateDate.Format("2006-01-02 15:04:05")
 		commentRtn.Comment = comment
 		commentRtn.User, err = impl.GetUserById(comment.UserId)

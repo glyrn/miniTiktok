@@ -67,7 +67,6 @@ func Auth(context *gin.Context, tokenStr string) {
 	}
 
 	context.Set("userId", strconv.FormatInt(token.UserId, 10))
-	context.Set("userName", token.UserName)
 	// 身份验证通过 放行
 	context.Next()
 }
@@ -93,7 +92,6 @@ func GetJWTFromID(id string) string {
 }
 
 /*
-这里是用于注入payload部分
 生成 token
 */
 func CreateToken(userId int64, userName string) string {
@@ -101,8 +99,7 @@ func CreateToken(userId int64, userName string) string {
 	//fmt.Println("开始合成token")
 
 	claims := Claims{
-		UserId:   userId,
-		UserName: userName,
+		UserId: userId,
 		StandardClaims: jwt.StandardClaims{
 			Subject:   "token",           // 主题
 			Issuer:    "tiktok",          // 签发者
@@ -128,6 +125,7 @@ func CreateToken(userId int64, userName string) string {
 
 }
 
+// 解析token
 func ParseToken(token string) (*Claims, bool) {
 
 	jwtToken, _ := jwt.ParseWithClaims(token, &Claims{}, func(token *jwt.Token) (interface{}, error) {

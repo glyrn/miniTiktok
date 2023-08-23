@@ -11,7 +11,6 @@ import (
 	"time"
 )
 
-// VideoServiceImpl 定义视频服务实现类
 type VideoServiceImpl struct {
 }
 

@@ -16,11 +16,6 @@ import (
 调用shell命令，完成视频截图，并储存在服务器的指定的位置
 */
 
-type Ffmsg struct {
-	VideoName string
-	ImageName string
-}
-
 var ClientSSH *ssh.Client
 
 func InitSSH() {
