@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"miniTiktok/entity"
-	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -15,12 +14,12 @@ import (
 
 type CommentActionResponse struct {
 	Response
-	Comment pojo.Comment `json:"comment,omitempty"`
+	Comment service.CommentRtn `json:"comment,omitempty"`
 }
 
 type CommentListResponse struct {
 	Response
-	CommentList []pojo.Comment `json:"comment_list,omitempty"`
+	CommentList []service.CommentRtn `json:"comment_list,omitempty"`
 }
 
 func CommentAction(context *gin.Context) {
@@ -71,7 +70,8 @@ func CommentAction(context *gin.Context) {
 	}
 	// 调用业务层对象
 	// 实例化
-	commentService := new(service.CommentServiceImpl)
+	//commentService := new(service.CommentServiceImpl)
+	commentService := service.CommentServiceImpl{}
 
 	if actionType == 1 {
 		// 获取到评论内容
@@ -79,15 +79,15 @@ func CommentAction(context *gin.Context) {
 
 		fmt.Println("获取到评论内容", content)
 
-		var comment_dao entity.Comment
-		comment_dao.UserId = userId
-		comment_dao.VideoId = videoId
-		comment_dao.CommentText = content
-		comment_dao.CreateDate = time.Now()
-		comment_dao.Cancel = 0
+		var comment entity.Comment
+		comment.UserId = userId
+		comment.VideoId = videoId
+		comment.CommentText = content
+		comment.CreateDate = time.Now()
+		comment.Cancel = 0
 
 		// 发表评论
-		comment_sevice, err := commentService.AddComment(comment_dao)
+		comment_sevice, err := commentService.AddComment(comment)
 		// 发表失败
 		if err != nil {
 			context.JSON(http.StatusOK, CommentActionResponse{Response: Response{
@@ -154,7 +154,7 @@ func CommentList(context *gin.Context) {
 		fmt.Println("videoID获取失败")
 	}
 	// 获取评论列表
-	commentService := new(service.CommentServiceImpl)
+	commentService := service.CommentServiceImpl{}
 
 	// 先读缓存
 	commentList, err := commentService.GetCommentListFromRedis(videoId)

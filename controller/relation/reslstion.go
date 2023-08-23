@@ -3,7 +3,7 @@ package relation
 import (
 	"github.com/gin-gonic/gin"
 	"miniTiktok/controller"
-	"miniTiktok/pojo"
+	"miniTiktok/entity"
 	"miniTiktok/service"
 	"net/http"
 )
@@ -14,7 +14,7 @@ type followResponse struct {
 }
 type followResp struct {
 	controller.Response
-	UserList []pojo.User `json:"user_list,omitempty"`
+	UserList []entity.User `json:"user_list,omitempty"`
 }
 
 // 定义全局变量

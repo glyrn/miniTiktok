@@ -4,7 +4,6 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
-	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -21,8 +20,8 @@ type Response struct {
 // feed流响应码
 type FeedResponse struct {
 	Response
-	VideoList []pojo.Video `json:"video_list"`
-	NextTime  int64        `json:"next_time"`
+	VideoList []service.VideoRtn `json:"video_list"`
+	NextTime  int64              `json:"next_time"`
 }
 
 type VideoTask struct {
@@ -35,13 +34,13 @@ type VideoTask struct {
 // 获取视频列表响应码 不带nexttime
 type VideoResponse struct {
 	Response
-	VideoList []pojo.Video `json:"video_list"`
+	VideoList []service.VideoRtn `json:"video_list"`
 }
 
 func Feed(c *gin.Context) {
-	// 这里需要的是用户上一次刷视频的时间 方便推送上一次视频之后的视频 由于latest_time字段是可选项 0 代表没看 是当前时间
+
 	inputTime := c.Query("latest_time")
-	fmt.Println("请求传入的时间" + inputTime)
+	// fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
 	// 传入时间不为空，则把字符串转换成数字。
 	if inputTime != "0" {
@@ -66,7 +65,7 @@ func Feed(c *gin.Context) {
 		lastTime = time.Now()
 	}
 
-	videoService := service.NewVideoServiceImpl()
+	videoService := service.VideoServiceImpl{}
 	feed, nextTime, err := videoService.Feed(lastTime)
 
 	if err != nil {
@@ -118,7 +117,8 @@ func Publish(context *gin.Context) {
 	var poolSize = 20
 	taskChan := make(chan VideoTask, poolSize)
 
-	videoService := service.NewVideoServiceImpl()
+	//videoService := service.NewVideoServiceImpl()
+	videoService := service.VideoServiceImpl{}
 
 	// 复用 goroutine
 	goroutinePool := &sync.Pool{
@@ -163,10 +163,10 @@ func ShowPublishList(context *gin.Context) {
 	if err != nil {
 		fmt.Println("userId 转化失败")
 	}
-	videoService := service.NewVideoServiceImpl()
-	publishList, err := videoService.ShowList(userId)
+	videoService := service.VideoServiceImpl{}
+	publishList, err := videoService.ShowPublishList(userId)
 	if err != nil {
-		fmt.Println("\tpublishList,err := videoService.ShowList(userId)\n 执行失败")
+		fmt.Println("\tpublishList,err := videoService.ShowPublishList(userId)\n 执行失败")
 		context.JSON(http.StatusOK, VideoResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "获取视频列表失败"},
 		})

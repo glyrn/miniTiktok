@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"miniTiktok/conf"
 	"miniTiktok/entity"
 	"testing"
 	"time"
@@ -18,7 +19,8 @@ func TestGetCommentCountByVideoId(t *testing.T) {
 	GetCommentCountByVideoId(1)
 }
 
-func TestInsert2Comment_dao(t *testing.T) {
+func TestInsert2Comment(t *testing.T) {
+	conf.InitConf()
 	InitDataBase()
 	Comment_dao, _ := Insert2Comment_dao(entity.Comment{
 		UserId:      2,

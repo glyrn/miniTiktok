@@ -5,7 +5,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"miniTiktok/entity"
 	"miniTiktok/midddleWare/jwt"
-	"miniTiktok/pojo"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -21,7 +20,7 @@ type LoginResponse struct {
 // UserInfoResponse 用户的所有信息返回
 type UserInfoResponse struct {
 	Response
-	User pojo.User `json:"user"`
+	User entity.User `json:"user"`
 }
 
 func Register(context *gin.Context) {
@@ -29,8 +28,8 @@ func Register(context *gin.Context) {
 	userName := context.Query("username")
 	passWord := context.Query("password")
 
-	fmt.Println("注册信息请求中得到了" + userName)
-	fmt.Println("注册信息请求中得到了" + passWord)
+	//fmt.Println("注册信息请求中得到了" + userName)
+	//fmt.Println("注册信息请求中得到了" + passWord)
 
 	// 获取业务层实例
 	UserServiceImpl := service.UserServiceImpl{}
@@ -49,8 +48,17 @@ func Register(context *gin.Context) {
 		// 进入注册流程
 		fmt.Println("开始注册")
 		User := entity.User{
-			Name:     userName,
-			Password: passWord,
+
+			Name:            userName,
+			Password:        passWord,
+			FollowCount:     0,
+			FollowerCount:   0,
+			PublishCount:    0,
+			FavoriteCount:   0,
+			BackgroundImage: "https://api.multiavatar.com/" + userName + ".png", // 背景图片 默认值
+			Signature:       "这个人很懒，什么都没写",                                      // 个性签名 默认值
+			Avatar:          "https://picsum.photos/seed/" + userName + "/200",  // 头像 默认值
+			TotalFavorited:  0,
 		}
 		// 插入数据 新增用户信息
 		flag := UserServiceImpl.Insert2User(&User)
@@ -134,7 +142,7 @@ func UserInfo(contest *gin.Context) {
 	// 获取业务实例
 	userServiceImpl := service.UserServiceImpl{}
 
-	user_service, err := userServiceImpl.GetUser_serviceById(id)
+	user_service, err := userServiceImpl.GetUserById(id)
 
 	if err != nil {
 		contest.JSON(http.StatusOK, UserInfoResponse{

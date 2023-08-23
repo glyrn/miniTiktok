@@ -1,26 +1,131 @@
 package service
 
 import (
-	"miniTiktok/pojo"
+	"errors"
+	"fmt"
+	"miniTiktok/dao"
+	"time"
 )
 
-type Likes_service struct {
-	Id           int64     `json:"id,omitempty"`
-	User_service pojo.User `json:"user,omitempty"`
-	CreateDate   string    `json:"create_date"`
+type LikeServiceImpl struct {
+	//UserService
 }
 
-type LikeService interface {
+// AddLikes 实现点赞
+func (likeServiceImpl LikeServiceImpl) AddLikes(userId int64, videoId int64) error {
 
-	// 点赞
-	AddLikes(userId int64, videoId int64) (Likes_service, error)
+	var flag bool
 
-	// 通过用户的ID来点赞
-	DelLikes(userId int64, videoId int64) error
+	_, err := dao.GetLikesByUserIdAndVideoId(userId, videoId)
+	//先判断是否存在
+	if err != nil {
+		// 先取出基础数据
+		var likeIndao dao.Favorite
+		likeIndao.VideoId = videoId
+		likeIndao.UserId = userId
+		likeIndao.Cancel = 0
+		likeIndao.CreateDate = time.Now()
 
-	// 通过视频的的ID查看点赞的列表
-	GetLikesList(videoId int64) ([]Likes_service, error)
+		_, flag = dao.Insert2Likes_dao(likeIndao)
+	} else {
+		fmt.Println("恢复点赞")
+		_, flag = dao.UpdateLikesByUserId(userId, videoId)
+	}
 
-	//获得视频点赞的总数
-	GetLikesCountByVideoId(videoId int64) int
+	if !flag {
+		fmt.Println("点赞失败")
+		return err
+	}
+
+	return nil
+
+}
+
+// DelLikes 通过用户的id加视频id来取消点赞
+func (LikesServiceImpl LikeServiceImpl) DelLikes(userId int64, videoId int64) error {
+	flag := dao.DeleteLikesByUserId(userId, videoId)
+	if flag {
+		fmt.Println(userId, "已经成功取消了点赞了")
+		return nil
+	} else {
+		fmt.Println(userId, "并没有点赞")
+		return errors.New("点赞取消失败")
+	}
+}
+
+//// GetLikeList 查看点赞的列表
+//func (likesServiceImpl LikeServiceImpl) GetLikeList(videoId int64) ([]Likes_service, error) {
+//	// 查询数据表中评论列表信息
+//	likes_dao_list, err := dao.GetLikesListByVideoId(videoId)
+//	if err != nil {
+//		fmt.Println("查询点赞列表错误")
+//		return nil, err
+//	}
+//	if likes_dao_list == nil {
+//		fmt.Println("该视频暂未获得点赞")
+//		return nil, nil
+//	}
+//	Likes_service_list := make([]Likes_service, len(likes_dao_list))
+//
+//	var index = 0
+//	for _, likes_dao := range likes_dao_list {
+//
+//		var likes_service Likes_service
+//		impl := UserServiceImpl{}
+//		likes_service.Id = likes_dao.Id
+//		likes_service.CreateDate = likes_dao.CreateDate.Format("2006-01-02 15:04:05")
+//		likes_service.User_service, err = impl.GetUserById(likes_dao.UserId)
+//
+//		if err != nil {
+//			fmt.Println("获取点赞信息失败")
+//		}
+//
+//		// 点赞入放进切片
+//		Likes_service_list[index] = likes_service
+//		index++
+//	}
+//	fmt.Println(Likes_service_list)
+//	return Likes_service_list, err
+//}
+
+//func (likesServiceImpl LikeServiceImpl) GetLikeListByUserId(userId int64) ([]Likes_service, error) {
+//	// 查询数据表中评论列表信息
+//	likes_dao_list, err := dao.GetLikesListByUserId(userId)
+//	if err != nil {
+//		fmt.Println("查询点赞列表错误")
+//		return nil, err
+//	}
+//	if likes_dao_list == nil {
+//		fmt.Println("该用户无点赞")
+//		return nil, nil
+//	}
+//	Likes_service_list := make([]Likes_service, len(likes_dao_list))
+//
+//	var index = 0
+//	for _, likes_dao := range likes_dao_list {
+//
+//		var likes_service Likes_service
+//		impl := UserServiceImpl{}
+//		likes_service.Id = likes_dao.Id
+//		likes_service.CreateDate = likes_dao.CreateDate.Format("2006-01-02 15:04:05")
+//		likes_service.User_service, err = impl.GetUserById(likes_dao.UserId)
+//
+//		if err != nil {
+//			fmt.Println("获取点赞信息失败")
+//		}
+//
+//		// 点赞入放进切片
+//		Likes_service_list[index] = likes_service
+//		index++
+//	}
+//	fmt.Println(Likes_service_list)
+//	return Likes_service_list, err
+//}
+
+func (likesServiceImpl LikeServiceImpl) GetLikesCountByVideoId(videoId int64) int64 {
+	count, err := dao.GetLikesCountByVideoId(videoId)
+	if err != nil {
+		fmt.Println("统计错误")
+	}
+	return count
 }

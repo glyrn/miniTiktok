@@ -63,7 +63,9 @@ func initRouter(r *gin.Engine) {
 			// 点赞
 			favoriteGroup.POST("/action/", jwt.JWT(), controller.LikesAction)
 			// 喜欢视频列表
-			favoriteGroup.GET("/list/", jwt.JWT(), controller.LikesList)
+			//favoriteGroup.GET("/list/", jwt.JWT(), controller.LikesList)
+			favoriteGroup.GET("/list/", controller.LikesList)
+
 		}
 
 		// message 路由

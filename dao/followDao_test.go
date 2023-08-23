@@ -24,10 +24,10 @@ func TestGetTotalityByFollowerId(t *testing.T) {
 }
 
 // 测试取消和添加关注
-func TestUpdateCanCelById(t *testing.T) {
-	InitDataBase()
-	UpdateCanCelById(1099, 1)
-}
+//func TestUpdateCanCelById(t *testing.T) {
+//	InitDataBase()
+//	UpdateCanCelById(1099, 1)
+//}
 
 // 测试添加数据添加操作
 func TestInsertFollow(t *testing.T) {

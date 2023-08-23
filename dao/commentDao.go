@@ -11,7 +11,12 @@ import (
 func Insert2Comment_dao(comment entity.Comment) (entity.Comment, bool) {
 	var insertedComment entity.Comment
 	err := Transaction(func(DB *gorm.DB) error {
+		// 新增评论表
 		if err := DB.Create(&comment).Error; err != nil {
+			return err
+		}
+		// 视频表中视频评论数量 +1
+		if err := DB.Model(&entity.Video{}).Where("id = ?", comment.VideoId).Update("comment_count", gorm.Expr("comment_count + 1")).Error; err != nil {
 			return err
 		}
 		insertedComment = comment
@@ -28,7 +33,7 @@ func Insert2Comment_dao(comment entity.Comment) (entity.Comment, bool) {
 }
 
 // 删除评论
-// 这里不是删除，而是把取消那一栏设置成0
+// 软删除
 // 传入评论id
 func DeleteComment(commentId int64) bool {
 	var comment entity.Comment
@@ -41,11 +46,15 @@ func DeleteComment(commentId int64) bool {
 			return errors.New("评论不存在")
 		}
 
-		// 开始删除
+		// 删除评论表中评论
 		// 把cancel 设置成1
-		err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Update("cancel", 1).Error
-		if err != nil {
+		if err := DB.Model(entity.Comment{}).Where("id = ?", commentId).Update("cancel", 1).Error; err != nil {
 			fmt.Println("删除失败")
+			return err
+		}
+
+		// 视频表中 视频的评论数 -1
+		if err := DB.Model(&entity.Video{}).Where("id = ?", comment.VideoId).Update("comment_count", gorm.Expr("comment_count - 1")).Error; err != nil {
 			return err
 		}
 		fmt.Println("评论删除成功")
@@ -86,11 +95,7 @@ func GetCommentListByVideoId(videoId int64) ([]entity.Comment, error) {
 func GetCommentCountByVideoId(videoId int64) (int64, error) {
 	// 评论数量
 	var commentCount int64
-	// 从数据库中查数据
-	// 这里必须显式调用 否则找不到表格 会报错
-	err := DB.Model(entity.Comment{}).Where("video_id = ? AND cancel = ?", videoId, 0).Count(&commentCount).Error
-	if err != nil {
-		fmt.Println("获取评论数量错误", err)
+	if err := DB.Model(entity.Video{}).Where("id = ?", videoId).Pluck("comment_count", &commentCount).Error; err != nil {
 		return -1, err
 	}
 	fmt.Println("获取评论数量为", commentCount)

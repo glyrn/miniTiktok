@@ -2,7 +2,7 @@ package dao
 
 import (
 	"fmt"
-	"miniTiktok/entity"
+	"miniTiktok/conf"
 	"miniTiktok/midddleWare/ftp"
 	"os"
 	"testing"
@@ -20,20 +20,6 @@ func TestPostVideo2FTP(t *testing.T) {
 		fmt.Println("上传视频失败")
 	}
 	defer file.Close()
-}
-
-func TestInsertVideo(t *testing.T) {
-	InitDataBase()
-	video := entity.Video{
-		Id:          6,
-		AuthorId:    12,
-		PlayUrl:     "_s",
-		CoverUrl:    "pg",
-		PublishTime: time.Now(),
-		Title:       "急啊",
-	}
-	bl := InsertVideo(&video)
-	fmt.Println(bl)
 }
 
 func TestGetVideoIdByAuthorId(t *testing.T) {
@@ -74,15 +60,6 @@ func TestGetVideoByVideoId(t *testing.T) {
 	fmt.Println(videos)
 }
 
-func TestDeleteVideoById(t *testing.T) {
-	InitDataBase()
-	bl := DeleteVideoById(6)
-	if !bl {
-		fmt.Println("删除失败...")
-	}
-	fmt.Println("删除成功")
-}
-
 func TestSaveVideoInfo(t *testing.T) {
 	InitDataBase()
 	err := SaveVideoInfo("111", "222", 64, "打篮球")
@@ -92,6 +69,7 @@ func TestSaveVideoInfo(t *testing.T) {
 }
 
 func TestGetWorkCountByAuthorId(t *testing.T) {
+	conf.InitConf()
 	InitDataBase()
 	count, _ := GetWorkCountByAuthorId(1)
 	fmt.Println(count)

@@ -2,6 +2,7 @@ package service
 
 import (
 	"fmt"
+	"miniTiktok/conf"
 	"miniTiktok/dao"
 	"miniTiktok/entity"
 	"testing"
@@ -29,10 +30,12 @@ func TestGetUserByName(t *testing.T) {
 
 func TestGetUser_serviceById(t *testing.T) {
 
+	conf.InitConf()
 	dao.InitDataBase()
 	userServiceImpl := UserServiceImpl{}
 	fmt.Println("开始执行GetUser_serviceById")
-	userServiceImpl.GetUser_serviceById(2)
+	user, _ := userServiceImpl.GetUserById(2)
+	fmt.Println(user)
 }
 
 //func TestCreateTokenByUser_dao(t *testing.T) {
