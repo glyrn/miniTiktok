@@ -70,8 +70,8 @@ func CommentAction(context *gin.Context) {
 	}
 	// 调用业务层对象
 	// 实例化
-	//commentService := new(service.CommentServiceImpl)
-	commentService := service.CommentServiceImpl{}
+	//commentService := new(service.CommentService)
+	commentService := service.CommentService{}
 
 	if actionType == 1 {
 		// 获取到评论内容
@@ -154,7 +154,7 @@ func CommentList(context *gin.Context) {
 		fmt.Println("videoID获取失败")
 	}
 	// 获取评论列表
-	commentService := service.CommentServiceImpl{}
+	commentService := service.CommentService{}
 
 	// 先读缓存
 	commentList, err := commentService.GetCommentListFromRedis(videoId)

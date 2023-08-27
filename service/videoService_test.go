@@ -13,10 +13,10 @@ func TestFeed(t *testing.T) {
 
 	dao.InitDataBase()
 
-	//var videoService VideoServiceImpl
+	//var videoService VideoService
 
-	//userService := &UserServiceImpl{} // 假设 UserServiceImpl 实现了 UserService 接口
-	videoService := VideoServiceImpl{}
+	//userService := &UserService{} // 假设 UserService 实现了 UserService 接口
+	videoService := VideoService{}
 
 	feed, time_, err := videoService.Feed(time2.Now())
 

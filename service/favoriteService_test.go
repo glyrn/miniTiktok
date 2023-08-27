@@ -10,7 +10,7 @@ import (
 // 结果难怪每一次传为的cancel为0，无语
 //func TestLikeServiceImpl_AddLikes(t *testing.T) {
 //	dao.InitDataBase()
-//	likes_service := LikeServiceImpl{}.AddFavorite(dao.Favorite{
+//	likes_service := LikeService{}.AddFavorite(dao.Favorite{
 //		Id:         3,
 //		UserId:     2,
 //		VideoId:    2,
@@ -23,5 +23,5 @@ import (
 // 取消点赞，通过用户的id
 func TestLikeServiceImpl_DelLikes(t *testing.T) {
 	dao.InitDataBase()
-	LikeServiceImpl{}.DelFavorite(2, 2)
+	LikeService{}.DelFavorite(2, 2)
 }

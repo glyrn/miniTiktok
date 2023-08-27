@@ -7,11 +7,11 @@ import (
 	"time"
 )
 
-type LikeServiceImpl struct {
+type LikeService struct {
 }
 
 // AddFavorite 实现点赞
-func (likeServiceImpl LikeServiceImpl) AddFavorite(userId int64, videoId int64) error {
+func (likeServiceImpl LikeService) AddFavorite(userId int64, videoId int64) error {
 
 	var flag bool
 
@@ -41,7 +41,7 @@ func (likeServiceImpl LikeServiceImpl) AddFavorite(userId int64, videoId int64) 
 }
 
 // DelFavorite 通过用户的id加视频id来取消点赞
-func (LikesServiceImpl LikeServiceImpl) DelFavorite(userId int64, videoId int64) error {
+func (LikesServiceImpl LikeService) DelFavorite(userId int64, videoId int64) error {
 	flag := dao.DeleteLikesByUserId(userId, videoId)
 	if flag {
 		fmt.Println(userId, "已经成功取消了点赞了")
@@ -50,4 +50,9 @@ func (LikesServiceImpl LikeServiceImpl) DelFavorite(userId int64, videoId int64)
 		fmt.Println(userId, "并没有点赞")
 		return errors.New("点赞取消失败")
 	}
+}
+
+// 判断用户是否点赞过视频
+func (LikeServiceImpl LikeService) JudgeFavorite(userId int64, videoId int64) bool {
+	return dao.JudgeFavorite(userId, videoId)
 }

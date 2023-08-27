@@ -11,16 +11,19 @@ import (
 	"time"
 )
 
-type VideoServiceImpl struct {
+type VideoService struct {
 }
 
 type VideoRtn struct {
 	entity.Video
-	entity.User `json:"author"`
+	//entity.User `json:"author"`
+	UserRtn `json:"author"`
+
+	IsFavorite bool `json:"is_favorite"`
 }
 
 // Feed 传入当前时间戳， 当前用户id，返回组装视频序列，以及视频最早发布的时间
-func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]VideoRtn, time.Time, error) {
+func (videoService VideoService) Feed(lastTime time.Time, userId int64) ([]VideoRtn, time.Time, error) {
 
 	videoRtns := make([]VideoRtn, 0, conf.Conf.App.VideoCount)
 
@@ -37,8 +40,13 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]VideoRtn, time.
 		// 视频数据
 		videoRtn.Video = video
 		// 作者数据
-		userimpl := UserServiceImpl{}
-		videoRtn.User, err = userimpl.GetUserById(video.AuthorId)
+		userimpl := UserService{}
+		followimpl := FollowService{}
+		favoriteimpl := LikeService{}
+		//videoRtn.User, err = userimpl.GetUserById(video.AuthorId)
+		videoRtn.UserRtn.User, err = userimpl.GetUserById(video.AuthorId)
+		videoRtn.UserRtn.IsFollow = followimpl.JudgeFollow(video.AuthorId, userId) //用户id
+		videoRtn.IsFavorite = favoriteimpl.JudgeFavorite(userId, video.Id)
 		if err != nil {
 			fmt.Println(err)
 		}
@@ -54,7 +62,7 @@ func (videoService VideoServiceImpl) Feed(lastTime time.Time) ([]VideoRtn, time.
 
 // Publish
 // 上传视频
-func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId int64, title string) error {
+func (videoService *VideoService) Publish(data *multipart.FileHeader, userId int64, title string) error {
 	file, err := data.Open()
 	if err != nil {
 		fmt.Println("流读取失败")
@@ -93,7 +101,7 @@ func (videoService *VideoServiceImpl) Publish(data *multipart.FileHeader, userId
 }
 
 // 查看发布的视频列表
-func (videoService VideoServiceImpl) ShowPublishList(authId int64) ([]VideoRtn, error) {
+func (videoService VideoService) ShowPublishList(authId int64) ([]VideoRtn, error) {
 
 	videos, err := dao.GetVideoByAuthorId(authId)
 
@@ -109,7 +117,7 @@ func (videoService VideoServiceImpl) ShowPublishList(authId int64) ([]VideoRtn, 
 		// 视频数据
 		videoRtn.Video = video
 		// 作者数据
-		userimpl := UserServiceImpl{}
+		userimpl := UserService{}
 		videoRtn.User, err = userimpl.GetUserById(video.AuthorId)
 		if err != nil {
 			fmt.Println(err)

@@ -57,7 +57,7 @@ func MessageAction(context *gin.Context) {
 	//--------------------------------------------------------------------------
 	//分割线，上面的内容是对id获取的检验，下面才是内容的开始
 	//添加消息
-	messageService := new(service.MessageServiceImpl)
+	messageService := new(service.MessageService)
 	err = messageService.InsetChat(toUserId, fromUserId, content)
 	if err != nil {
 		context.JSON(http.StatusOK, MessageResponse{Response: Response{
@@ -117,7 +117,7 @@ func MessageList(context *gin.Context) {
 	fmt.Println("上次最新消息的时间：", preMsgTime)
 
 	// 获取消息列表
-	messageService := new(service.MessageServiceImpl)
+	messageService := new(service.MessageService)
 
 	// 先查缓存
 	messageList, err := messageService.GetChatListFromRedis(toUserId, fromUserId, preMsgTime)

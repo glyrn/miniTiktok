@@ -12,19 +12,19 @@ import (
 
 func TestDelComment(t *testing.T) {
 	dao.InitDataBase()
-	CommentServiceImpl{}.DelComment(35)
+	CommentService{}.DelComment(35)
 }
 
 func TestGetCommentList(t *testing.T) {
 	dao.InitDataBase()
-	CommentServiceImpl{}.GetCommentList(1)
+	CommentService{}.GetCommentList(1)
 }
 
 func TestAddComment(t *testing.T) {
 	conf.InitConf()
 	dao.InitDataBase()
 
-	comment_service, _ := CommentServiceImpl{}.AddComment(entity.Comment{
+	comment_service, _ := CommentService{}.AddComment(entity.Comment{
 		UserId:      1,
 		VideoId:     1,
 		CommentText: "火",
@@ -37,7 +37,7 @@ func TestAddComment(t *testing.T) {
 //func TestSetCommentList2Redis(t *testing.T) {
 //
 //	redis.InitRedis()
-//	cmi := CommentServiceImpl{}
+//	cmi := CommentService{}
 //
 //	cms := []pojo.Comment{
 //		pojo.Comment{
@@ -52,7 +52,7 @@ func TestAddComment(t *testing.T) {
 
 func TestGetCommentListFromRedis(t *testing.T) {
 	redis.InitRedis()
-	cmi := CommentServiceImpl{}
+	cmi := CommentService{}
 	a, _ := cmi.GetCommentListFromRedis(12)
 	fmt.Println(a)
 }

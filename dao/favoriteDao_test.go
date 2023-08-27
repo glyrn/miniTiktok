@@ -2,6 +2,7 @@ package dao
 
 import (
 	"fmt"
+	"miniTiktok/conf"
 	"testing"
 )
 
@@ -49,7 +50,15 @@ func TestUpdateLikesByUserId(t *testing.T) {
 }
 
 func TestGetFavoriteIdListByUserId(t *testing.T) {
+	conf.InitConf()
 	InitDataBase()
-	list, _ := GetFavoriteIdListByUserId(12)
+	list, _ := GetFavoriteIdListByUserId(68)
 	fmt.Println(list)
+}
+
+func TestJudgeFavorite(t *testing.T) {
+	conf.InitConf()
+	InitDataBase()
+	fmt.Println(JudgeFavorite(68, 19))
+
 }

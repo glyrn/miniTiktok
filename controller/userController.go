@@ -32,7 +32,7 @@ func Register(context *gin.Context) {
 	//fmt.Println("注册信息请求中得到了" + passWord)
 
 	// 获取业务层实例
-	UserServiceImpl := service.UserServiceImpl{}
+	UserServiceImpl := service.UserService{}
 
 	user, err := UserServiceImpl.GetUserByName(userName)
 	if user.Name == userName && err == nil {
@@ -95,7 +95,7 @@ func Login(context *gin.Context) {
 	userName := context.Query("username")
 	passWord := context.Query("password")
 
-	UserService_Impl := service.UserServiceImpl{}
+	UserService_Impl := service.UserService{}
 
 	user, err := UserService_Impl.GetUserByName(userName)
 
@@ -140,7 +140,7 @@ func UserInfo(contest *gin.Context) {
 		fmt.Println("获取id失败")
 	}
 	// 获取业务实例
-	userServiceImpl := service.UserServiceImpl{}
+	userServiceImpl := service.UserService{}
 
 	user_service, err := userServiceImpl.GetUserById(id)
 

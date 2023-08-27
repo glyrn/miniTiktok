@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"gorm.io/gorm"
 	"miniTiktok/entity"
 	"miniTiktok/util"
@@ -151,4 +152,15 @@ func GetFanIdAndFollowList(userId int64) ([]int64, []int64) {
 	util.Error("获取粉丝列表Id出错啦：", err1)
 	util.Error("获取关注列表Id出错啦：", err2)
 	return fanIdList, followIdList
+}
+
+// 查询 作者 是否被用户关注
+func JudgeFollow(authId int64, userId int64) bool {
+	follow := entity.Follow{}
+	result := DB.Model(&entity.Follow{}).Where("user_id = ? and follower_id = ? and cancel = 0", authId, userId).Find(&follow)
+
+	if result.Error != nil {
+		fmt.Println("数据库连接错误")
+	}
+	return result.RowsAffected > 0
 }

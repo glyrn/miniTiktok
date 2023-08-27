@@ -7,11 +7,11 @@ import (
 )
 
 // 定义服务实现类
-type FollowServiceImpl struct {
+type FollowService struct {
 }
 
 // 添加或取消关注
-func (fsi *FollowServiceImpl) InsertFollow(userId, toUserId, account int64) {
+func (fsi *FollowService) InsertFollow(userId, toUserId, account int64) {
 	//account 传进来为1或2，数据库中是0或1所以减1
 	follow := entity.Follow{UserId: userId, FollowerId: toUserId, Cancel: int8(account - 1)}
 	id := dao.GetID(userId, toUserId)
@@ -34,7 +34,7 @@ func GetFanIdAndFollowList(id int64) ([]entity.User, []entity.User) {
 
 	var fanList, followList []entity.User
 
-	impl := UserServiceImpl{}
+	impl := UserService{}
 
 	//取粉丝用户和关注用户
 	for _, fanId := range fanIdList {
@@ -53,7 +53,7 @@ func GetFanIdAndFollowList(id int64) ([]entity.User, []entity.User) {
 }
 
 // 进行以粉丝列表和关注列表的区分，可以只获取一个,这里通过 str 进行分流
-func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []entity.User {
+func (fsi *FollowService) GetFanIdOrFollowList(str string, userId int64) []entity.User {
 	//获取粉丝列表和关注列表Id
 	fanIdList, followIdList := GetFanIdAndFollowList(userId)
 	switch {
@@ -63,4 +63,9 @@ func (fsi *FollowServiceImpl) GetFanIdOrFollowList(str string, userId int64) []e
 		return followIdList
 	}
 	return nil
+}
+
+// 判断作者是否被用户所关注
+func (fsi *FollowService) JudgeFollow(authId int64, userId int64) bool {
+	return dao.JudgeFollow(authId, userId)
 }

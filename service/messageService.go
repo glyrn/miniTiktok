@@ -12,10 +12,10 @@ import (
 	"time"
 )
 
-type MessageServiceImpl struct {
+type MessageService struct {
 }
 
-func (messageServiceImpl MessageServiceImpl) InsetChat(toUserId int64, fromUserId int64, content string) error {
+func (messageServiceImpl MessageService) InsetChat(toUserId int64, fromUserId int64, content string) error {
 	err := dao.ActionMessage(toUserId, fromUserId, content)
 	if err != nil {
 		fmt.Println("添加消息错误")
@@ -24,7 +24,7 @@ func (messageServiceImpl MessageServiceImpl) InsetChat(toUserId int64, fromUserI
 	return nil
 }
 
-func (messageServiceImpl MessageServiceImpl) GetChatList(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
+func (messageServiceImpl MessageService) GetChatList(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
 	messageList, err := dao.GetChatListByToUserIdAndFromUserId(toUserId, fromUserId, preMsgTime)
 	fmt.Println(messageList)
 	if err != nil {
@@ -34,7 +34,7 @@ func (messageServiceImpl MessageServiceImpl) GetChatList(toUserId int64, fromUse
 	return messageList, nil
 }
 
-func (messageServiceImpl MessageServiceImpl) GetChatListFromRedis(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
+func (messageServiceImpl MessageService) GetChatListFromRedis(toUserId int64, fromUserId int64, preMsgTime int64) ([]entity.Message, error) {
 	messageJSON, err := redis.Rdb.Get(redis.Ctx, fmt.Sprintf("messageList:"+strconv.FormatInt(toUserId, 10)+strconv.FormatInt(fromUserId, 10)+strconv.FormatInt(preMsgTime, 10))).Result()
 	if errors.Is(err, redis.ErrKeyNotExist) {
 		fmt.Println("未命中")
@@ -55,7 +55,7 @@ func (messageServiceImpl MessageServiceImpl) GetChatListFromRedis(toUserId int64
 
 }
 
-func (messageServiceImpl MessageServiceImpl) SetChatListToRedis(toUserId int64, fromUserId int64, preMsgTime int64, messageList []entity.Message) error {
+func (messageServiceImpl MessageService) SetChatListToRedis(toUserId int64, fromUserId int64, preMsgTime int64, messageList []entity.Message) error {
 	messageListJSON, err := json.Marshal(messageList)
 	if err != nil {
 		fmt.Println("messageList序列化 失败")
@@ -75,7 +75,7 @@ func (messageServiceImpl MessageServiceImpl) SetChatListToRedis(toUserId int64, 
 	return err
 }
 
-func (messageServiceImpl MessageServiceImpl) DeleteChatListToRedis(toUserId int64, fromUserId int64) error {
+func (messageServiceImpl MessageService) DeleteChatListToRedis(toUserId int64, fromUserId int64) error {
 	err := redis.Rdb.Del(redis.Ctx, fmt.Sprintf("messageList:"+
 		strconv.FormatInt(toUserId, 10)+
 		strconv.FormatInt(fromUserId, 10)+

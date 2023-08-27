@@ -72,8 +72,8 @@ func LikesAction(context *gin.Context) {
 	}
 	// 调用业务层对象
 	// 实例化
-	//likeService := new(service.LikeServiceImpl)
-	likeService := service.LikeServiceImpl{}
+	//likeService := new(service.LikeService)
+	likeService := service.LikeService{}
 
 	if actionType == 1 {
 		// 增加点赞
@@ -131,12 +131,12 @@ func LikesList(context *gin.Context) {
 		fmt.Println("userID获取失败")
 	}
 	// 获取点赞列表
-	//likeService := new(service.LikeServiceImpl)
+	//likeService := new(service.LikeService)
 	//通过用户的id来查点赞列表
 
 	videoIDList, _ := dao.GetFavoriteIdListByUserId(userId)
 	var videoList = make([]service.VideoRtn, len(videoIDList))
-	usi := service.UserServiceImpl{}
+	usi := service.UserService{}
 
 	// 循环遍历IDlist
 	for i, videoID := range videoIDList {

@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"mime/multipart"
+	"miniTiktok/midddleWare/jwt"
 	"miniTiktok/service"
 	"net/http"
 	"strconv"
@@ -40,6 +41,9 @@ type VideoResponse struct {
 func Feed(c *gin.Context) {
 
 	inputTime := c.Query("latest_time")
+	tokenStr := c.Query("token")
+	token, ok := jwt.ParseToken(tokenStr)
+
 	// fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
 	// 传入时间不为空，则把字符串转换成数字。
@@ -65,8 +69,13 @@ func Feed(c *gin.Context) {
 		lastTime = time.Now()
 	}
 
-	videoService := service.VideoServiceImpl{}
-	feed, nextTime, err := videoService.Feed(lastTime)
+	videoService := service.VideoService{}
+	// 用户没有登录
+	if !ok {
+		token = &jwt.Claims{}
+		token.UserId = -1
+	}
+	feed, nextTime, err := videoService.Feed(lastTime, token.UserId)
 
 	if err != nil {
 		fmt.Println("获取视频流失败")
@@ -118,7 +127,7 @@ func Publish(context *gin.Context) {
 	taskChan := make(chan VideoTask, poolSize)
 
 	//videoService := service.NewVideoServiceImpl()
-	videoService := service.VideoServiceImpl{}
+	videoService := service.VideoService{}
 
 	// 复用 goroutine
 	goroutinePool := &sync.Pool{
@@ -163,7 +172,7 @@ func ShowPublishList(context *gin.Context) {
 	if err != nil {
 		fmt.Println("userId 转化失败")
 	}
-	videoService := service.VideoServiceImpl{}
+	videoService := service.VideoService{}
 	publishList, err := videoService.ShowPublishList(userId)
 	if err != nil {
 		fmt.Println("\tpublishList,err := videoService.ShowPublishList(userId)\n 执行失败")

@@ -221,3 +221,13 @@ func GetFavoriteIdListByUserId(userID int64) ([]int64, error) {
 
 	return list, nil
 }
+
+// 判断视频是否被用户点赞过
+func JudgeFavorite(userId int64, videoId int64) bool {
+
+	fav := Favorite{}
+
+	result := DB.Model(&Favorite{}).Where("user_id = ? AND video_id = ? and cancel = 0", userId, videoId).First(&fav)
+
+	return result.RowsAffected > 0
+}

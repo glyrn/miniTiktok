@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-type CommentServiceImpl struct {
+type CommentService struct {
 }
 type CommentRtn struct {
 	entity.Comment
@@ -20,7 +20,7 @@ type CommentRtn struct {
 
 // 发表评论
 // 返回评论包含完整字段的信息 <- 用于返回字段中需要
-func (CommentServiceImpl CommentServiceImpl) AddComment(comment entity.Comment) (CommentRtn, error) {
+func (CommentServiceImpl CommentService) AddComment(comment entity.Comment) (CommentRtn, error) {
 
 	// 存表
 	commentRtnDao, flag := dao.Insert2Comment_dao(comment)
@@ -32,7 +32,7 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment entity.Comment) 
 	err := CommentServiceImpl.DeleteCommentListFromRedis(comment.VideoId)
 
 	// 调出评论的用户的信息
-	Userimpl := UserServiceImpl{}
+	Userimpl := UserService{}
 	user, err := Userimpl.GetUserById(comment.UserId)
 	if err != nil {
 		fmt.Println("用户信息查询错误")
@@ -49,7 +49,7 @@ func (CommentServiceImpl CommentServiceImpl) AddComment(comment entity.Comment) 
 }
 
 // 删除评论
-func (CommentServiceImpl CommentServiceImpl) DelComment(commentId int64) error {
+func (CommentServiceImpl CommentService) DelComment(commentId int64) error {
 	flag := dao.DeleteComment(commentId)
 	if flag {
 		fmt.Println(commentId, "评论删除成功")
@@ -69,7 +69,7 @@ func (CommentServiceImpl CommentServiceImpl) DelComment(commentId int64) error {
 }
 
 // 查看评论列表
-func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]CommentRtn, error) {
+func (CommentServiceImpl CommentService) GetCommentList(videoId int64) ([]CommentRtn, error) {
 	// 查询数据表中评论列表信息
 	commentList, err := dao.GetCommentListByVideoId(videoId)
 	if err != nil {
@@ -86,10 +86,11 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]Co
 	for _, comment := range commentList {
 
 		var commentRtn CommentRtn
-		impl := UserServiceImpl{}
+		impl := UserService{}
 
-		commentRtn.Comment.DateStr = commentRtn.Comment.CreateDate.Format("2006-01-02 15:04:05")
 		commentRtn.Comment = comment
+		commentRtn.Comment.DateStr = commentRtn.Comment.CreateDate.Format("2006-01-02 15:04:05")
+
 		commentRtn.User, err = impl.GetUserById(comment.UserId)
 		if err != nil {
 			fmt.Println("获取评论者信息失败")
@@ -103,7 +104,7 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentList(videoId int64) ([]Co
 	return CommentRtnList, err
 }
 
-func (CommentServiceImpl CommentServiceImpl) GetCommentListFromRedis(videoId int64) ([]CommentRtn, error) {
+func (CommentServiceImpl CommentService) GetCommentListFromRedis(videoId int64) ([]CommentRtn, error) {
 	commentJSON, err := redis.Rdb.Get(redis.Ctx, fmt.Sprintf("comment:%d", videoId)).Result()
 	if err == redis.ErrKeyNotExist {
 		fmt.Println("未命中")
@@ -122,7 +123,7 @@ func (CommentServiceImpl CommentServiceImpl) GetCommentListFromRedis(videoId int
 	return commentList, nil
 }
 
-func (CommentServiceImpl CommentServiceImpl) SetCommentList2Redis(videoId int64, commentList []CommentRtn) error {
+func (CommentServiceImpl CommentService) SetCommentList2Redis(videoId int64, commentList []CommentRtn) error {
 	commentJSON, err := json.Marshal(commentList)
 	if err != nil {
 		fmt.Println("把对象转化为json失败")
@@ -135,7 +136,7 @@ func (CommentServiceImpl CommentServiceImpl) SetCommentList2Redis(videoId int64,
 	return err
 }
 
-func (CommentServiceImpl CommentServiceImpl) DeleteCommentListFromRedis(videoId int64) error {
+func (CommentServiceImpl CommentService) DeleteCommentListFromRedis(videoId int64) error {
 	err := redis.Rdb.Del(redis.Ctx, fmt.Sprintf("comment:"+strconv.FormatInt(videoId, 10))).Err()
 	if err == redis.ErrKeyNotExist {
 		fmt.Println("缓存中不存在 可视为成功删除")

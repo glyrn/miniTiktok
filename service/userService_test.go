@@ -11,7 +11,7 @@ import (
 func TestInsert2User(t *testing.T) {
 
 	dao.InitDataBase()
-	userServiceImpl := UserServiceImpl{}
+	userServiceImpl := UserService{}
 	user := &entity.User{
 		Name:     "test555",
 		Password: "123456",
@@ -22,7 +22,7 @@ func TestInsert2User(t *testing.T) {
 
 func TestGetUserByName(t *testing.T) {
 	dao.InitDataBase()
-	userServiceImpl := UserServiceImpl{}
+	userServiceImpl := UserService{}
 
 	userServiceImpl.GetUserByName("test7")
 
@@ -32,7 +32,7 @@ func TestGetUser_serviceById(t *testing.T) {
 
 	conf.InitConf()
 	dao.InitDataBase()
-	userServiceImpl := UserServiceImpl{}
+	userServiceImpl := UserService{}
 	fmt.Println("开始执行GetUser_serviceById")
 	user, _ := userServiceImpl.GetUserById(2)
 	fmt.Println(user)

@@ -18,7 +18,7 @@ type followResp struct {
 }
 
 // 定义全局变量
-var fsi = service.FollowServiceImpl{}
+var fsi = service.FollowService{}
 
 // 封装用户id解析失败响应处理
 func FailedRequest(str string, err error, c *gin.Context) {
