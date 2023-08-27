@@ -42,7 +42,12 @@ func Feed(c *gin.Context) {
 
 	inputTime := c.Query("latest_time")
 	tokenStr := c.Query("token")
-	token, ok := jwt.ParseToken(tokenStr)
+	// 用户没有登录
+	// 设置成用户id为-1的token 且永不过期
+	if tokenStr == "" {
+		tokenStr = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX2lkIjotMSwidXNlcm5hbWUiOiIiLCJleHAiOjkyMjMzNzIwMzY4NTQ3NzU4MDcsImlhdCI6MTY5MzEzMDAyNiwiaXNzIjoidGlrdG9rIiwibmJmIjoxNjkzMTMwMDI2LCJzdWIiOiJ0b2tlbiJ9.IvtmLB8jOUS-0L59zPIPehX7JakykUwbB5q9PYk3cak"
+	}
+	token, _ := jwt.ParseToken(tokenStr)
 
 	// fmt.Println("请求传入的时间" + inputTime)
 	var lastTime time.Time
@@ -70,11 +75,7 @@ func Feed(c *gin.Context) {
 	}
 
 	videoService := service.VideoService{}
-	// 用户没有登录
-	if !ok {
-		token = &jwt.Claims{}
-		token.UserId = -1
-	}
+
 	feed, nextTime, err := videoService.Feed(lastTime, token.UserId)
 
 	if err != nil {

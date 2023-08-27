@@ -94,7 +94,7 @@ func GetJWTFromID(id string) string {
 /*
 生成 token
 */
-func CreateToken(userId int64, userName string) string {
+func CreateToken(userId int64) string {
 
 	//fmt.Println("开始合成token")
 

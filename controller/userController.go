@@ -72,7 +72,7 @@ func Register(context *gin.Context) {
 		if err != nil {
 			fmt.Println("从表中获取对象错误")
 		}
-		token := jwt.CreateToken(userInTable.Id, userInTable.Name)
+		token := jwt.CreateToken(userInTable.Id)
 
 		// 存JWT令牌
 		err = jwt.SetJWT2Redis(strconv.FormatInt(user.Id, 10), token)
@@ -106,7 +106,7 @@ func Login(context *gin.Context) {
 	if passWord == user.Password {
 		// 通过登录验证
 
-		token := jwt.CreateToken(user.Id, user.Name)
+		token := jwt.CreateToken(user.Id)
 
 		// 存JWT令牌
 		err := jwt.SetJWT2Redis(strconv.FormatInt(user.Id, 10), token)

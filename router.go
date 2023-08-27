@@ -12,7 +12,8 @@ func initRouter(r *gin.Engine) {
 
 	mainGroup := r.Group("/douyin")
 
-	mainGroup.GET("/feed/", redis.RateLimit(), controller.Feed)
+	//mainGroup.GET("/feed/", redis.RateLimit(), controller.Feed)
+	mainGroup.GET("/feed/", controller.Feed)
 
 	{
 		// user 路由

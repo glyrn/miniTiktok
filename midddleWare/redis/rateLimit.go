@@ -23,7 +23,7 @@ func RateLimit() gin.HandlerFunc {
 
 		count, _ := strconv.Atoi(requestCount)
 
-		if count > 12 {
+		if count > 120 {
 			// 请求次数超过阈值，拦截请求，并返回错误响应
 			context.Abort()
 			context.JSON(http.StatusTooManyRequests, gin.H{
