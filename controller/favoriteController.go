@@ -118,6 +118,7 @@ func LikesAction(context *gin.Context) {
 	}
 }
 
+// 喜欢列表
 func LikesList(context *gin.Context) {
 
 	// 获取身份
