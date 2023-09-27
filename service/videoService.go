@@ -29,6 +29,8 @@ func (videoService VideoService) Feed(lastTime time.Time, userId int64) ([]Video
 
 	// 根据传入的当前时间，获取传入时间前n个视频
 	videos, err := dao.GetVideosByCurTime(lastTime)
+	// todo 这里的业务逻辑直接返回 nginx 的静态资源连接地址  需要添加功能 利用nginx的负载均衡
+	// todo 考虑搭建一个网关 对流量进行分流
 	if err != nil {
 		fmt.Println("获取前n个视频失败")
 		return nil, time.Time{}, err

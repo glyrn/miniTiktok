@@ -29,7 +29,6 @@ type VideoTask struct {
 	UserId int64
 	Title  string
 	Data   *multipart.FileHeader // 视频文件数据
-
 }
 
 // 获取视频列表响应码 不带nexttime
